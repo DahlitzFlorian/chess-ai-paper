@@ -12,3 +12,30 @@ __pycache__/
 # Jupyter Notebook
 .ipynb_checkpoints/
 */.ipynb_checkpoints/
+
+# LaTeX
+paper.aux
+paper.bbl
+paper.bcf
+paper.blg
+paper.fdb_latexmk
+paper.fls
+paper.glg
+paper.glo
+paper.gls
+paper.ist
+paper.lof
+paper.lot
+paper.log
+paper.lol
+paper.out
+paper.run.xml
+paper.synctex.gz
+paper.toc
+*.swp
+.DS_Store
+*.log
+
+# Jebref
+paper.bib.*
+paper/pdfs/

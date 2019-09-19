@@ -1,0 +1,70 @@
+% !TeX root = ./paper.tex
+\documentclass[headheight=21.75pt,footheight=21.75pt]{scrartcl}
+
+\usepackage{graphicx,tabularx,xcolor,hyperref,scrlayer-scrpage,scrhack,enumitem,listings,xurl,pdfpages,courier,anyfontsize,csquotes,fontspec}
+\usepackage[style=apa]{biblatex}
+\usepackage[top=30mm,bottom=30mm,left=40mm,right=35mm]{geometry}
+\usepackage[printonlyused]{acronym}
+\usepackage[nonumberlist]{glossaries}
+\usepackage[english,ngerman]{babel}
+\usepackage{float}
+\usepackage{amssymb}
+\usepackage{makecell}
+
+\DeclareLanguageMapping{ngerman}{ngerman-apa}
+\bibliography{paper}
+\linespread{1.5}
+\clubpenalty10000
+\widowpenalty10000
+\setcounter{biburllcpenalty}{7000}
+\setcounter{biburlucpenalty}{8000}
+\makeatletter
+\lst@AddToHook{TextStyle}{\let\lst@basicstyle\ttfamily\normalsize}
+\lst@AddToHook{DisplayStyle}{\let\lst@basicstyle\ttfamily\fontsize{8pt}{9.6pt}\selectfont}
+\makeatother
+\makeatletter
+\renewcommand{\@pnumwidth}{3em}
+\renewcommand{\@tocrmarg}{4em}
+\makeatother
+\lstset{breaklines=true,backgroundcolor=\color[HTML]{FFFFC0},literate={\_}{}{0\discretionary{\_}{}{\_}}}
+\urlstyle{tt}
+\DefineBibliographyStrings{ngerman}{nodate = {{}o. J.}}
+\setlist{nosep,style=sameline}
+\renewcommand{\sectionmark}[1]{\markboth{#1}{}}
+\renewcommand{\substack}[1]{\textstyle #1}
+\ihead{\leftmark}
+\chead{}
+\ohead{\autora\ \text{und} \autorb}
+\ifoot{}
+\cfoot{\thepage}
+\ofoot{}
+
+\input help/settings
+\input content/glossary
+
+% Table Settings
+\renewcommand\theadfont{\bfseries}
+
+\begin{document}
+
+% Table Settings
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+
+\fontsize{12.5pt}{15pt}\selectfont
+\pagenumbering{Roman}
+\input help/cover_page
+\newpage \input content/abstract
+\newpage \tableofcontents
+\input content/acronyms
+\newpage \addcontentsline{toc}{section}{Abbildungsverzeichnis} \listoffigures
+\newpage \addcontentsline{toc}{section}{Tabellenverzeichnis} \listoftables
+\newpage \addcontentsline{toc}{section}{Listings} \lstlistoflistings{}
+\newpage \pagenumbering{arabic}
+\input content/chapter1.tex
+\newpage \input content/chapter2.tex
+\newpage \addcontentsline{toc}{section}{Literatur} \printbibliography{}
+\newpage \addcontentsline{toc}{section}{Glossar} \glsaddall{} \printglossaries{}
+
+\end{document}
