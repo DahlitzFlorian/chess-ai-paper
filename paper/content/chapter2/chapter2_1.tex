@@ -3,7 +3,15 @@
 
 In der Spieltheorie ist es in der Regel nicht möglich, alle möglichen Zugfolgen aus einer Spielposition heraus bis zum Ende zu verfolgen.
 Deshalb \glqq [...] wird eine Funktion benötigt, die die Stellung auf dem Spielbrett danach bewertet,
-ob sie für eine der beiden Parteien vorteilhaft oder nachteilig ist.\grqq [\cite{Paulsen2009}]
+ob sie für eine der beiden Parteien vorteilhaft oder nachteilig ist.\grqq \ [\cite{Paulsen2009}]
+Diese Funktion wird als \textit{Bewertungsfunktion} bezeichnet.
+Die Bewertungsfunktion setzt sich aus einem materiellen und einer positionellen Komponente zusammen.
+Bei der materiellen Komponente werden die verbleibenden Figuren auf der eigenen Seite gezählt und die Anzahl der gegnerischen Figuren von diesem Wert subtrahiert.
+Daraus lassen sich erste Schlussfolgerungen über den Spielstand ziehen.
+Zudem ist es möglich, die derzeitige Spielphase abzuleiten [\cite{Paulsen2009}].
+
+Da es beim Schach aber auch entscheidend ist, auf welchen Positionen sich die einzelnen Figuren befinden und in welcher Position sie zueinander stehen (Bauernstruktur, Königssicherheit), wird zusätzlich zur materiellen Komponente eine positionelle Komponente berechnet.
+Die verschiedenen Positionen werden aus der Spielbrettaufstellung entnommen und fließend mit ihren jeweiligen Gewichtungen in die anschließende Bewertung ein [\cite{Paulsen2009}].
 
 
 \subsubsection{Einfache Bewertungsfunktion}
