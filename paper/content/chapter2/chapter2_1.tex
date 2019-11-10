@@ -16,6 +16,20 @@ Die verschiedenen Positionen werden aus der Spielbrettaufstellung entnommen und 
 
 \subsubsection{Einfache Bewertungsfunktion}
 
+Das Schachspiel setzt sich aus zwei wichtigen Faktoren zusammen: Einerseits ist abgesehen von der Tatsache, welcher Spieler den ersten Zug macht, keine Zufallskomponete enthalten, andererseits handelt es sich um ein Spiel mit \gls{PI}.
+Diese zwei Faktoren führen dazu, dass bei jeder Schachbrettposition eine der folgenden drei Aussagen gilt [\cite{Shannon1950}]:
+
+\begin{enumerate}
+    \item Es handelt sich um eine gewonnene Position für Weiß. Somit kann Weiß einen Sieg forcieren, wobei Schwarz verteidigen.
+    \item Es handelt sich um eine gewonnene Position für Schwarz. Somit kann Schwarz einen Sieg forcieren, wobei Weiß spielt.
+    \item Es handelt sich um eine unentschiedene Position für beide Parteien. Somit kann es nur ein Unentschieden am Ende geben, falls beide Parteien dies forcieren und keine Fehler machen.
+\end{enumerate}
+
+\noindent Bei einigen Spielen (so auch beim Schach) lässt sich aus den genannten zwei Faktoren und den daraus resultierenden drei Aussagen eine \textit{einfache Bewertungsfunktion} \(\displaystyle f(P)\) ableiten, wobei \(\displaystyle P\) die Schachbrettposition bezeichnet.
+Der Rückgabewert der Funktion ist die Kategorie, in die die jeweilige Position gehört: Sieg (+1), Unentschieden (0), Niederlage (-1).
+Zum Zeitpunkt des Zuges des Schachcomputers werden die Werte \(\displaystyle f(P)\) für alle Positionen nach möglichen Halbzügen berechnet.
+Der Zug mit dem maximalen Wert wird am Ende ausgeführt [\cite{Shannon1950}].
+
 
 \subsubsection{Weitere Bewertungsfunktionen}
 
