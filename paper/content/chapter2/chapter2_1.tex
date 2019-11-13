@@ -30,6 +30,42 @@ Der Rückgabewert der Funktion ist die Kategorie, in die die jeweilige Position 
 Zum Zeitpunkt des Zuges des Schachcomputers werden die Werte \(\displaystyle f(P)\) für alle Positionen nach möglichen Halbzügen berechnet.
 Der Zug mit dem maximalen Wert wird am Ende ausgeführt [\cite{Shannon1950}].
 
+Im Zuge dieser Arbeit wird die einfache Bewertungsfunktion nach Tomasz Michniewski verwendet, die ursprünglich in der \textit{Polish chess programming discussion list (progszach)} veröffentlicht wurde und im chessprogramming.org Wiki beschrieben wird.
+Die Gewichtungen der Bewertungsfunktion wurden so gewählt, dass ein Mangel an Schachkenntnissen ausgeglichen werden kann und nicht, um durch Schachkenntnisse ergänzt zu werden.
+Da die Gewichtungen von Tomasz Michniewski und nicht von den Autoren dieser Arbeit festgelegt wurden, erfolgt an dieser Stelle keine Erläuterung zur Entstehung der Gewichtungswerte [\cite{Wiki2018}]. Die von Tomasz Michniewski beschriebene einfache Bewertungsfunktion wird in zwei Teilen dargestellt: Einfache Figurenwerte (engl. \textit{simple piece values}) und Figuren-Quadrat Tabellen (engl. \textit{piece-square tables}).
+
+Mit der Festlegung von Werten je Figur werden vier verschiedene Ziele erreicht:
+
+\begin{enumerate}
+    \item Vermeidung des Austauschs einer kleinen Figur gegen drei Bauern
+    \item Dem Computer signalisieren, dass das halten des Läuferpaars vorteilhaft ist
+    \item Vermeidung des Austauschs von zwei kleinen Figuren gegen einen Turm und einen Bauern
+    \item Verbleiben bei der menschlichen Schacherfahrung
+\end{enumerate}
+
+\noindent Der erste Punkt wird durch Gleichung~\ref{eq:piece-values_first-result} erfüllt.
+
+\begin{equation} \label{eq:piece-values_first-result}
+\begin{split}
+    L > 3B \\
+    S > 3B
+\end{split}
+\end{equation}
+
+\noindent Zwar gibt es durchaus Positionen, in denen drei Bauern wertvoller als eine kleine Figur sind, jedoch ist es im Allgemeinen besser eine kleine Figur zu behalten, da im Spielverlauf die Bauern individuell attackiert werden können und deren Wert als Dreier-Figuren-Gespann verloren geht [\cite{Wiki2018}].
+Der zweite genannte Punkt wird durch Gleichung~\ref{eq:piece-values_second-result} erreicht.
+
+\begin{equation} \label{eq:piece-values_second-result}
+    L > S
+\end{equation}
+
+\noindent Zwar garantiert diese Gleichung kein Halten des Läuferpaars, da am Ende ein Läufer gegen einen Springer stehen kann, dennoch ist es eine Tatsache, dass Spieler oftmals Springer mit Läufern schlagen und nicht Läufer mit Springern [\cite{Wiki2018}].
+Die ersten beiden Gleichungen~\ref{eq:piece-values_first-result} und~\ref{eq:piece-values_second-result} führen zusammen zu Gleichung~\ref{eq:piece-values_first-and-second-result-combined}.
+
+\begin{equation} \label{eq:piece-values_first-and-second-result-combined}
+    L > S > 3B
+\end{equation}
+
 
 \subsubsection{Weitere Bewertungsfunktionen}
 
