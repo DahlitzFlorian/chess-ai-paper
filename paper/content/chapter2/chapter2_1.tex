@@ -66,6 +66,70 @@ Die ersten beiden Gleichungen~\ref{eq:piece-values_first-result} und~\ref{eq:pie
     L > S > 3B
 \end{equation}
 
+\noindent Der dritte Punkt wird zwar durch Gleichung~\ref{eq:piece-values_third-result} erreicht, dennoch haben Spiele wie jenes zwischen Karpov und Kasparov gezeigt, dass bereits ein Turm und zwei Bauern ausreichen, um gegen zwei kleine Figuren gewinnen zu können.
+
+\begin{equation} \label{eq:piece-values_third-result}
+    L + S > T + B
+\end{equation}
+
+\noindent Aus diesem Grund wird die Gleichung~\ref{eq:piece-values_third-result}, die ferner als Gleichung~\ref{eq:piece-values_third-result-full} dargestellt werden kann, um einen Faktor erweitert, woraus sich Gleichung~\ref{eq:piece-values_third-result-enhanced} ergibt [\cite{Wiki2018}].
+
+\begin{equation} \label{eq:piece-values_third-result-full}
+    T + 2B > L + S > T + B
+\end{equation}
+
+\begin{equation} \label{eq:piece-values_third-result-enhanced}
+    L + S > T + 1.5B
+\end{equation}
+
+\noindent Durch die hier beschriebenen Gleichungen ist der vierte Punkt implizit erfüllt.
+Zu guter Letzt wird noch eine Gleichung benötigt, die die Überlegenheit einer Dame-Bauer-Kombination gegenüber zwei Türmen darstellt.
+Dies ist in Gleichung~\ref{eq:piece-values_final-result-missing} abgebildet.
+
+\begin{equation} \label{eq:piece-values_final-result-missing}
+    Q + B = 2T
+\end{equation}
+
+\noindent Somit erhält man das Gleichungssystem, das in Gleichung~\ref{eq:piece-values_final-result} dargestellt ist.
+
+\begin{equation} \label{eq:piece-values_final-result}
+\begin{split}
+    L > S > 3B \\
+    L + S = T + 1.5B \\
+    Q + B = 2T
+\end{split}
+\end{equation}
+
+\noindent Dieses Gleichungssystem wird durch die in Tabelle~\ref{tb:piece-values_satified} gelisteten Werte erfüllt.
+Diese Werte wurden von Tomasz Michniewski festgelegt mit Ausnahme des Wertes des Königs.
+Dieser Wert stammt aus dem Paper von Claude Shannon, wobei dieser an der Stelle dem König den Wert 200 gibt, was durch die Umrechnung in Hundertstelbauer zu 20000 führt [\cite{Shannon1950}].
+Der Wert für den König ist bewusst so hoch gewählt worden, da der Verlust des Königs automatisch zur Niederlage führt.
+Daraus folgt zudem, dass der Verlust des Königs durch die materielle Komponente der Bewertungsfunktion einfacher erkannt werden kann.
+Zu guter Letzt sei angemerkt, dass die Wahl der Figurenwerte dazu führt, dass diese in einer 2~Byte vorzeichenbehafteten Ganzzahl abgelegt werden können, da der Gesamtwert aller Spielfiguren einer Seite rund 30300 beträgt [\cite{Wiki2018}].
+
+\begin{table}
+    \centering
+    \begin{tabular}{| L{0.47\textwidth} | R{0.47\textwidth} |}
+        \hline
+        \thead{Figur} & \thead{Wert} \\
+        \hline
+        Bauer & 100 \\
+        \hline
+        Springer & 320 \\
+        \hline
+        Läufer & 330 \\
+        \hline
+        Turm & 500 \\
+        \hline
+        Dame & 900 \\
+        \hline
+        König & 20000 \\
+        \hline
+    \end{tabular}
+    \caption[Figurenwerte in Hundertstelbauer]{Figurenwerte in Hundertstelbauer [\cite{Wiki2018}]}
+    \label{tb:piece-values_satified}
+\end{table}
+
 
 \subsubsection{Weitere Bewertungsfunktionen}
 
