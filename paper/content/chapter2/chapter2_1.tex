@@ -133,6 +133,24 @@ Zu guter Letzt sei angemerkt, dass die Wahl der Figurenwerte dazu führt, dass d
 Nachdem die Figurenwerte ausführlich dargelegt wurden, werden nun Figuren-Quadrat Tabellen erstellt.
 Diese haben die Aufgabe für gut positionierte Figuren eine \textit{Belohnung} und für schlecht positionierte Figuren \textit{Abzüge} zu erteilen [\cite{Wiki2018}].
 
+Für die Bauern gilt, dass deren Fortwärtsbewegung prinzipiell belohnt wird.
+Des Weiteren werden die zentralen Bauern (D2, E2) negativ bewertet, sollten sie sich nicht bewegen.
+Das rührt daher, da Bauern direkt vor dem König-Dame-Paar als Fehler angesehen werden, weil es im Besonderen den Bewegungsradius des Königs einschränkt [\cite{Wiki2018}].
+Gleichung~\ref{eq:piece-squared-tables_pawns-matrix} zeigt mittels einer Matrix die positionsbezogenen Werte für Bauern auf dem Spielbrett.
+
+\begin{equation} \label{eq:piece-squared-tables_pawns-matrix}
+\begin{pmatrix}
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+50 & 50 & 50 & 50 & 50 & 50 & 50 & 50 \\
+10 & 10 & 20 & 30 & 30 & 20 & 10 & 10 \\
+5 & 5 & 10 & 25 & 25 & 10 & 5 & 5 \\
+0 & 0 & 0 & 20 & 20 & 0 & 0 & 0 \\
+5 & -5 & -10 & 0 & 0 & -10 & -5 & 5 \\
+5 & 10 & 10 & -20 & -20 & 10 & 10 & 5 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0
+\end{pmatrix}
+\end{equation}
+
 
 \subsubsection{Weitere Bewertungsfunktionen}
 
