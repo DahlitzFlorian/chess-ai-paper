@@ -36,6 +36,10 @@ paper.toc
 .DS_Store
 *.log
 
+# Don't push PDF as it's a binary and may result in a merge conflict
+# Instead, build it locally via latexmk
+paper.pdf
+
 # Jebref
 paper.bib.*
 paper/pdfs/
