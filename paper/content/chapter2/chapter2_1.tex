@@ -1,17 +1,18 @@
 % !TeX root = ../../paper.tex
 \subsection{Bewertungsfunktion}
 
-In der Spieltheorie ist es in der Regel nicht möglich, alle möglichen Zugfolgen aus einer Spielposition heraus bis zum Ende zu verfolgen.
+In der Spieltheorie im Allgemeinen und im Schach im Besonderen ist es in der Regel nicht möglich, alle möglichen Zugfolgen aus einer Spielposition heraus bis zum Ende zu verfolgen.
 Deshalb \glqq [...] wird eine Funktion benötigt, die die Stellung auf dem Spielbrett danach bewertet,
 ob sie für eine der beiden Parteien vorteilhaft oder nachteilig ist.\grqq \ [\cite{Paulsen2009}]
 Diese Funktion wird als \textit{Bewertungsfunktion} bezeichnet.
 Die Bewertungsfunktion setzt sich aus einem materiellen und einer positionellen Komponente zusammen.
-Bei der materiellen Komponente werden die verbleibenden Figuren auf der eigenen Seite gezählt und die Anzahl der gegnerischen Figuren von diesem Wert subtrahiert.
+Bei der materiellen Komponente werden zunächst die vorhandenen weißen Figuren nach Stärke bewertet und aufsummiert.
+Anschließend werden die schwarzen Figuren nach Stärke bewertet, aufsummiert und vom Gesamtwert der weißen Figuren subtrahiert.
 Daraus lassen sich erste Schlussfolgerungen über den Spielstand ziehen.
 Zudem ist es möglich, die derzeitige Spielphase abzuleiten [\cite{Paulsen2009}].
 
-Da es beim Schach aber auch entscheidend ist, auf welchen Positionen sich die einzelnen Figuren befinden und in welcher Position sie zueinander stehen (Bauernstruktur, Königssicherheit), wird zusätzlich zur materiellen Komponente eine positionelle Komponente berechnet.
-Die verschiedenen Positionen werden aus der Spielbrettaufstellung entnommen und fließend mit ihren jeweiligen Gewichtungen in die anschließende Bewertung ein [\cite{Paulsen2009}].
+Da es beim Schach aber auch entscheidend ist, auf welchen Feldern sich die einzelnen Figuren befinden und in welcher Position sie zueinander stehen (Bauernstruktur, Königssicherheit), wird zusätzlich zur materiellen Komponente eine positionelle Komponente berechnet.
+Die verschiedenen Positionen werden aus der Spielbrettaufstellung entnommen und fließen mit ihren jeweiligen Gewichtungen in die anschließende Bewertung ein [\cite{Paulsen2009}].
 
 
 \subsubsection{Einfache Bewertungsfunktion}
@@ -20,9 +21,9 @@ Das Schachspiel setzt sich aus zwei wichtigen Faktoren zusammen: Einerseits ist 
 Diese zwei Faktoren führen dazu, dass bei jeder Schachbrettposition eine der folgenden drei Aussagen gilt [\cite{Shannon1950}]:
 
 \begin{enumerate}
-    \item Es handelt sich um eine gewonnene Position für Weiß. Somit kann Weiß einen Sieg forcieren, wobei Schwarz verteidigen.
+    \item Es handelt sich um eine gewonnene Position für Weiß. Somit kann Weiß einen Sieg forcieren, wobei Schwarz verteidigt.
     \item Es handelt sich um eine gewonnene Position für Schwarz. Somit kann Schwarz einen Sieg forcieren, wobei Weiß spielt.
-    \item Es handelt sich um eine unentschiedene Position für beide Parteien. Somit kann es nur ein Unentschieden am Ende geben, falls beide Parteien dies forcieren und keine Fehler machen.
+    \item Es handelt sich um eine ausgeglichene Position für beide Parteien. Somit kann es nur ein Unentschieden am Ende geben, falls beide Parteien keine Fehler machen.
 \end{enumerate}
 
 \noindent Bei einigen Spielen (so auch beim Schach) lässt sich aus den genannten zwei Faktoren und den daraus resultierenden drei Aussagen eine \textit{einfache Bewertungsfunktion} \(\displaystyle f(P)\) ableiten, wobei \(\displaystyle P\) die Schachbrettposition bezeichnet.
@@ -83,7 +84,7 @@ Die ersten beiden Gleichungen~\ref{eq:piece-values_first-result} und~\ref{eq:pie
 \end{equation}
 
 \noindent Durch die hier beschriebenen Gleichungen ist der vierte Punkt implizit erfüllt.
-Zu guter Letzt wird noch eine Gleichung benötigt, die die Überlegenheit einer Dame-Bauer-Kombination gegenüber zwei Türmen darstellt.
+Zu guter Letzt wird noch eine Gleichung benötigt, die das Verhältnis einer Dame-Bauer-Kombination gegenüber zwei Türmen darstellt.
 Dies ist in Gleichung~\ref{eq:piece-values_final-result-missing} abgebildet.
 
 \begin{equation} \label{eq:piece-values_final-result-missing}
@@ -133,7 +134,7 @@ Zu guter Letzt sei angemerkt, dass die Wahl der Figurenwerte dazu führt, dass d
 Nachdem die Figurenwerte ausführlich dargelegt wurden, werden nun Figuren-Quadrat Tabellen erstellt.
 Diese haben die Aufgabe für gut positionierte Figuren eine \textit{Belohnung} und für schlecht positionierte Figuren \textit{Abzüge} zu erteilen [\cite{Wiki2018}].
 
-Für die Bauern gilt, dass deren Fortwärtsbewegung prinzipiell belohnt wird.
+Für die Bauern gilt, dass deren Vorwärtsbewegung prinzipiell belohnt wird.
 Des Weiteren werden die zentralen Bauern (D2, E2) negativ bewertet, sollten sie sich nicht bewegen.
 Das rührt daher, da Bauern direkt vor dem König-Dame-Paar als Fehler angesehen werden, weil es im Besonderen den Bewegungsradius des Königs einschränkt [\cite{Wiki2018}].
 Gleichung~\ref{eq:piece-squared-tables_pawns-matrix} zeigt mittels einer Matrix die positionsbezogenen Werte für Bauern auf dem Spielbrett.
