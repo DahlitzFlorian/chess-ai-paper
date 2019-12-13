@@ -156,6 +156,23 @@ Gleichung~\ref{eq:piece-squared-tables_pawns-matrix} zeigt mittels einer Matrix 
 
 \noindent Eine genauere Erläuterung zu den einzelnen Werten pro Spielposition der Bauern kann bei [\cite{Wiki2018}] nachgelesen werden.
 
+Springer sind aufgrund ihrer Bewegungsart am effektivsten in der Mitte des Spielfeldes, weshalb sie auf den mittleren Positionen höhere Punktwerte erhalten.
+Demgegenüber erhalten sie negative Punktwerte für Randpositionen, da diese ihren Bewegungsradius einschränken [\cite{Wiki2018}].
+Gleichung~\ref{eq:piece-squared-tables_knights-matrix} zeigt die entsprechenden Werte für die Springerpositionen.
+
+\begin{equation} \label{eq:piece-squared-tables_knights-matrix}
+\begin{pmatrix}
+-50 & -40 & -30 & -30 & -30 & -30 & -40 & -50 \\
+-40 & -20 & 0 & 0 & 0 & 0 & -20 & -40 \\
+-30 & 0 & 10 & 15 & 15 & 10 & 0 & -30 \\
+-30 & 5 & 15 & 20 & 20 & 15 & 5 & -30 \\
+-30 & 0 & 15 & 20 & 20 & 15 & 0 & -30 \\
+-30 & 5 & 10 & 15 & 15 & 10 & 5 & -30 \\
+-40 & -20 & 0 & 5 & 5 & 0 & -20 & -40 \\
+-50 & -40 & -30 & -30 & -30 & -30 & -40 & -50
+\end{pmatrix}
+\end{equation}
+
 
 \subsubsection{Weitere Bewertungsfunktionen}
 
