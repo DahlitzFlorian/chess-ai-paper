@@ -173,6 +173,25 @@ Gleichung~\ref{eq:piece-squared-tables_knights-matrix} zeigt die entsprechenden 
 \end{pmatrix}
 \end{equation}
 
+\bigskip
+
+\noindent Läufer erhalten zusätzliche Punkte für zentrale Positionen, da sie dort, ähnlich wie Springer, den größten Bewegungsradius besitzen.
+Des Weiteren erhalten sie für Randpositionen Abzüge, wobei die Positionen in den Ecken des Spielbretts besonders negativ bewertet sind [\cite{Wiki2018}].
+Eine positionsbezogene Punktwerteaufstellung mittels einer Matrix ist in Gleichung~\ref{eq:piece-squared-tables_bishops-matrix} abgebildet.
+
+\begin{equation} \label{eq:piece-squared-tables_bishops-matrix}
+\begin{pmatrix}
+    -50 & -40 & -30 & -30 & -30 & -30 & -40 & -50 \\
+    -40 & -20 & 0 & 0 & 0 & 0 & -20 & -40 \\
+    -30 & 0 & 10 & 15 & 15 & 10 & 0 & -30 \\
+    -30 & 5 & 15 & 20 & 20 & 15 & 5 & -30 \\
+    -30 & 0 & 15 & 20 & 20 & 15 & 0 & -30 \\
+    -30 & 5 & 10 & 15 & 15 & 10 & 5 & -30 \\
+    -40 & -20 & 0 & 5 & 5 & 0 & -20 & -40 \\
+    -50 & -40 & -30 & -30 & -30 & -30 & -40 & -50
+\end{pmatrix}
+\end{equation}
+
 
 \subsubsection{Weitere Bewertungsfunktionen}
 
