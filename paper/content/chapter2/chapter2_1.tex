@@ -228,6 +228,44 @@ Dennoch lässt sich aus der von Tomasz Michniewski aufgestellten Darstellung abl
 \end{pmatrix}
 \end{equation}
 
+\bigskip
+
+\noindent Zu guter Letzt werden zwei Figuren-Quadrat Tabellen für den König aufgestellt.
+Die erste Tabelle (siehe Gleichung~\ref{eq:piece-squared-tables_king-matrix-1}) ist für mittlere Phase des Spiels gedacht.
+Hierbei wird deutlich, dass der König zurückgehalten und hinter der Bauernlinie gehalten werden sollte [\cite{Wiki2018}].
+
+\begin{equation} \label{eq:piece-squared-tables_king-matrix-1}
+\begin{pmatrix}
+-30 & -40 & -40 & -50 & -50 & -40 & -40 & -30 \\
+-30 & -40 & -40 & -50 & -50 & -40 & -40 & -30 \\
+-30 & -40 & -40 & -50 & -50 & -40 & -40 & -30 \\
+-30 & -40 & -40 & -50 & -50 & -40 & -40 & -30 \\
+-20 & -30 & -30 & -40 & -40 & -30 & -30 & -20 \\
+-10 & -20 & -20 & -20 & -20 & -20 & -20 & -10 \\
+20 & 20 & 0 & 0 & 0 & 0 & 20 & 20 \\
+20 & 30 & 10 & 0 & 0 & 10 & 30 & 20
+\end{pmatrix}
+\end{equation}
+
+\bigskip
+
+\noindent Für die Endspielphase sieht die Tabelle für den König jedoch anders aus (siehe Gleichung~\ref{eq:piece-squared-tables_king-matrix-2}).
+Randpositionen schränken den König in seiner Bewegung zusätzlich ein und sind gerade in der Endphase von erhöhtem Risiko, weshalb diese Positionen besonders negativ bewertet sind.
+Demgegenüber sind die zentralen Positionen besonders positiv bewertet [\cite{Wiki2018}].
+
+\begin{equation} \label{eq:piece-squared-tables_king-matrix-2}
+\begin{pmatrix}
+-50 & -40 & -30 & -20 & -20 & -30 & -40 & -50 \\
+-30 & -20 & -10 & 0 & 0 & -10 & -20 & -30 \\
+-30 & -10 & 20 & 30 & 30 & 20 & -10 & -30 \\
+-30 & -10 & 30 & 40 & 40 & 30 & -10 & -30 \\
+-30 & -10 & 30 & 40 & 40 & 30 & -10 & -30 \\
+-30 & -10 & 20 & 30 & 30 & 20 & -10 & -30 \\
+-30 & -30 & 0 & 0 & 0 & 0 & -30 & -30 \\
+-50 & -30 & -30 & -30 & -30 & -30 & -30 & -50
+\end{pmatrix}
+\end{equation}
+
 
 \subsubsection{Weitere Bewertungsfunktionen}
 
