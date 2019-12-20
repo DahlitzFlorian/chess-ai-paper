@@ -39,6 +39,7 @@ paper.toc
 # Don't push PDF as it's a binary and may result in a merge conflict
 # Instead, build it locally via latexmk
 paper.pdf
+*.pdf
 
 # Jebref
 paper.bib.*
