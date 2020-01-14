@@ -15,7 +15,7 @@ Da es beim Schach aber auch entscheidend ist, auf welchen Feldern sich die einze
 Die verschiedenen Positionen werden aus der Spielbrettaufstellung entnommen und fließen mit ihren jeweiligen Gewichtungen in die anschließende Bewertung ein [\cite{Paulsen2009}].
 
 
-\subsubsection{Einfache Bewertungsfunktion}
+\subsubsection{Einfache Bewertungsfunktion} \label{ch:simple-eval-function}
 
 Das Schachspiel setzt sich aus zwei wichtigen Faktoren zusammen: Einerseits ist abgesehen von der Tatsache, welcher Spieler den ersten Zug macht, keine Zufallskomponete enthalten, andererseits handelt es sich um ein Spiel mit \gls{PI}.
 Diese zwei Faktoren führen dazu, dass bei jeder Schachbrettposition eine der folgenden drei Aussagen gilt [\cite{Shannon1950}]:
@@ -278,4 +278,7 @@ Diese beginnt nach ihm, wenn eine der beiden folgenden Aussagen zutrifft [\cite{
 
 
 \subsubsection{Weitere Bewertungsfunktionen}
+
+Das in Kapitel \textit{\ref{ch:simple-eval-function} Einfache Bewertungsfunktion} beschriebene Verfahren für eine (einfache) Bewertungsfunktion ist nicht die einzige Möglichkeit zur Evaluierung des Spielzustandes.
+Da eine durchgeführte Recherche jedoch keine klaren Abgrenzungen zwischen Arten von Bewertungsfunktionen aufzeigte und die beschriebene einfache Bewertungsfunktion in den meisten Fällen vollkommen ausreichend ist, wird an dieser Stelle auf eine weitere Ausführung verzichtet.
 
