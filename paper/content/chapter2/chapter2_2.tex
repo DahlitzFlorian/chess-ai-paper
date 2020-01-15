@@ -1,5 +1,13 @@
 % !TeX root = ../../paper.tex
-\subsection{Alpha-Beta-Suche}
+\subsection{Alpha-Beta Pruning}
+
+Beim \textit{Alpha-Beta Pruning} (zu dt. etwa \textit{Alpha-Beta Beschneidung}) handelt es sich um ein Verfahren, das zum Ziel hat, den exponentiell wachsenden Spielbaum mit seiner rasch anwachsenden Zahl an Knoten zu reduzieren.
+Diese Reduktion ist deshalb sinnvoll, da rund 99\% der Knoten des Spielbaums im Schach in der aktuellen Situation uninteressant sind.
+Die Reduktion führt zu einem kleineren Spielbaum, wodurch der Schachcomputer einen wesentlichen Leistungsschub erhalten kann [\cite{Paulsen2009}].
+Im Vergleich zum Mini-Max Verfahren werden so für den Spieler als nicht vorteilhafte Spielzüge erscheinende Möglichkeiten nicht weiterverfolgt, wodurch das Alpha-Beta Pruning als eine optimierte Variante des Mini-Max Verfahrens angesehen werden kann [\cite{Knuth1975}].
+Auch ist dieses Verfahren an das Verhalten menschlicher Spieler angelegt.
+So blenden menschliche Spieler Spielzüge aus bzw. verfolgen diese nicht weiter, wenn sie ihnen unsinnig erscheinen [\cite{Paulsen2009}].
+
 
 \subsubsection{Ruhesuche}
 
