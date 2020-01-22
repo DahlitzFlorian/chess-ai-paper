@@ -31,3 +31,67 @@ Markiert der Endstand einen Sieg für Spieler X, so erhält dieser den Wert 1, b
 Die Werte der Blattknoten werden anschließend nach oben propagiert.
 Maximierende Knoten (Spieler X ist am Zug) übernehmen den jeweils höchsten Zahlenwert, minimierende Knoten (Spieler O ist am Zug) den niedrigsten Wert.
 Am Ende dieses Prozesses ist von der Ausgangslage des Spiels erkennbar, dass Spieler X dem rechten Pfad des Baumes folgen muss, um garantiert einen Sieg zu erzielen, es für ihn aber auch bei einer Fehlentscheidung im nächsten Zug noch möglich ist, das Spiel zu gewinnen.
+Beim Schach ist es jedoch in der Regel nicht möglich alle Positionen bis zum Spielende zu analysieren. Im Gegenteil zu Tic-Tac-Toe, bei dem der Spielbaum maximal die Tiefe neun erreicht, kann beim Schach theoretisch eine Tiefe von 5899 erreicht werden (Quelle Wikipedia 50-Züge-Regel).
+Da es im Verlauf eines Schachspiels durchschnittlich $x$ mögliche Züge für den Spieler am Zug gibt, gibt es ab einer bestimmten Tiefe $t$, $x^t$ zu analysierenden Positionen !Quelle Shannon number. Weil sogar schnelle Computer bei diesem exponentiell wachsenden Baum irgendwann zu hohe Rechenzeiten benötigen, muss man sich auf eine maximale Tiefe festlegen bis zu der man den Spielbaum analysiert. Diese ist je nach Anspruch, bei präzisen Evaluationen tiefer, bei schnellen Evaluationen weniger tief.\\.
+Um den Minimax Algorithmus auf Programmierebene umzusetzen, werden folgende Methoden benötigt (Quelle Shannon).
+\begin{itemize}
+    \item Sammelt für eine Position die erlaubten Züge. Hierfür muss sowohl auf verschiedenen Zugarten der Figuren und Schach eingegangen werden, als auch Sonderzüge wie En-Passant und die Rochade berücksichtigt werden.
+    \item Die Kernaufgabe des Minimax Algorithmus umsetzt, also das abwechselnde Maximieren und Minimieren der möglichen Folgezüge einer Position.
+    \item Die statische Eval-Function aus Kapitel 2.1 umsetzt.
+\end{itemize}
+Beim Umsetzen der Kernaufgabe des Minimax-Algorithmus wird der Ansatz von Knuth und Moore übernommen.
+Es werden Funktionen $F$ und $G$ für für beide Spieler (Weiß und Schwarz)  definiert, welche ihr Verhalten beim Treffen auf eine Schachposition $p$ in der Tiefe $t$ definiert.
+\begin{equation*}
+    F(p,t) =
+    \begin{cases}
+        e(p) \quad \text{if }t=0,\\
+        max(G(p1, t-1), G(p2, t-1), ... , G(pl, t-1)) \quad \text{if } t > 0
+    \end{cases}
+\end{equation*}
+\begin{equation*}
+    G(p,t) =
+    \begin{cases}
+        e(p) \quad \text{if }t=0,\\
+        min(F(p1, t-1), F(p2, t-1), ... , F(pl, t-1)) \quad \text{if } t > 0
+    \end{cases}
+\end{equation*}
+wobei $p1$, ... , $pl$ die möglichen Positionen sind, welche nach einem Zug aus der Position p resultieren können und $e(p)$ die Eval-Function ist. Es kann dieselbe Eval-Function für beide Funktionen benutzt werden, weil diese weiß-favorisierende Positionen mit positiven Werten- und schwarz-favorisierende Positionen mit negativen Werten bewertet.
+In Pseudocode sieht ein Minimax folgendermaßen aus:
+
+\begin{algorithm}
+    \caption{Minimax}
+    \begin{algorithmic}[1]
+        \Function{maximize}{Integer $d$, Position $p$}
+        \If{$d < 1$}
+        \State \Return evaluate($p$)
+        \Else
+        \State $score \gets -\infty$
+        \State $legalMoves \gets findLegalMoves(p)$
+        \ForAll {$m$ in $legalMoves$}
+        \State p.move(m)
+        \State $moveScore \gets minimize(d-1, p)$
+        \If{$moveScore > score$}
+        \State $score \gets moveScore$
+        \EndIf
+        \EndFor
+        \EndIf
+        \State \Return $score$
+        \EndFunction
+        \Function{minimize}{Integer $d$, Position $p$}
+        \If{$d < 1$}
+        \State \Return evaluate($p$)
+        \Else
+        \State $score \gets \infty$
+        \State $legalMoves \gets findLegalMoves(p)$
+        \ForAll {$m$ in $legalMoves$}
+        \State p.move(m)
+        \State $moveScore \gets maximize(d-1, p)$
+        \If{$moveScore < score$}
+        \State $score \gets moveScore$
+        \EndIf
+        \EndFor
+        \EndIf
+        \State \Return $score$
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}
