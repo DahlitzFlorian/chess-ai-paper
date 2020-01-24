@@ -32,6 +32,7 @@ paper.out
 paper.run.xml
 paper.synctex.gz
 paper.toc
+paper.xdv
 *.swp
 .DS_Store
 *.log
