@@ -31,16 +31,23 @@ Markiert der Endstand einen Sieg für Spieler X, so erhält dieser den Wert 1, b
 Die Werte der Blattknoten werden anschließend nach oben propagiert.
 Maximierende Knoten (Spieler X ist am Zug) übernehmen den jeweils höchsten Zahlenwert, minimierende Knoten (Spieler O ist am Zug) den niedrigsten Wert.
 Am Ende dieses Prozesses ist von der Ausgangslage des Spiels erkennbar, dass Spieler X dem rechten Pfad des Baumes folgen muss, um garantiert einen Sieg zu erzielen, es für ihn aber auch bei einer Fehlentscheidung im nächsten Zug noch möglich ist, das Spiel zu gewinnen.
-Beim Schach ist es jedoch in der Regel nicht möglich alle Positionen bis zum Spielende zu analysieren. Im Gegenteil zu Tic-Tac-Toe, bei dem der Spielbaum maximal die Tiefe neun erreicht, kann beim Schach theoretisch eine Tiefe von 5899 erreicht werden (Quelle Wikipedia 50-Züge-Regel).
-Da es im Verlauf eines Schachspiels durchschnittlich $x$ mögliche Züge für den Spieler am Zug gibt, gibt es ab einer bestimmten Tiefe $t$, $x^t$ zu analysierenden Positionen !Quelle Shannon number. Weil sogar schnelle Computer bei diesem exponentiell wachsenden Baum irgendwann zu hohe Rechenzeiten benötigen, muss man sich auf eine maximale Tiefe festlegen bis zu der man den Spielbaum analysiert. Diese ist je nach Anspruch, bei präzisen Evaluationen tiefer, bei schnellen Evaluationen weniger tief.\\.
-Um den Minimax Algorithmus auf Programmierebene umzusetzen, werden folgende Methoden benötigt (Quelle Shannon).
+Beim Schach ist es jedoch in der Regel nicht möglich alle Positionen bis zum Spielende zu analysieren.
+Im Gegenteil zu Tic-Tac-Toe, bei dem der Spielbaum maximal die Tiefe neun erreicht, kann beim Schach theoretisch eine Tiefe von 5899 erreicht werden (Quelle Wikipedia 50-Züge-Regel).
+Da es im Verlauf eines Schachspiels durchschnittlich $x$ mögliche Züge für den Spieler am Zug gibt, gibt es ab einer bestimmten Tiefe $t$, $x^t$ zu analysierenden Positionen (Quelle Wikipedia Shannon number https://en.wikipedia.org/wiki/Shannon_number abgerufen 22.01.2020).
+Weil sogar schnelle Computer bei diesem exponentiell wachsenden Baum irgendwann zu hohe Rechenzeiten benötigen, muss man sich auf eine maximale Tiefe festlegen bis zu der man den Spielbaum analysiert.
+Diese ist je nach Anspruch, bei präzisen Evaluationen tiefer, bei schnellen Evaluationen weniger tief.\\
+Um den Minimax Algorithmus auf Programmierebene umzusetzen, werden folgende Methoden benötigt [\cite{Shannon1950}].
 \begin{itemize}
     \item Sammelt für eine Position die erlaubten Züge. Hierfür muss sowohl auf verschiedenen Zugarten der Figuren und Schach eingegangen werden, als auch Sonderzüge wie En-Passant und die Rochade berücksichtigt werden.
     \item Die Kernaufgabe des Minimax Algorithmus umsetzt, also das abwechselnde Maximieren und Minimieren der möglichen Folgezüge einer Position.
     \item Die statische Eval-Function aus Kapitel 2.1 umsetzt.
+    \item Kann für eine Position Schachzüge ausführen und diese auch rückgängig machen
 \end{itemize}
-Beim Umsetzen der Kernaufgabe des Minimax-Algorithmus wird der Ansatz von Knuth und Moore übernommen.
-Es werden Funktionen $F$ und $G$ für für beide Spieler (Weiß und Schwarz)  definiert, welche ihr Verhalten beim Treffen auf eine Schachposition $p$ in der Tiefe $t$ definiert.
+Beim Umsetzen der Kernaufgabe des Minimax-Algorithmus wird der Ansatz von (Quelle: Knuth & Moore 1975) übernommen.
+Außerdem wird die Standard-Implementierung verwendet, bei denen der gesamte Algorithmus in zwei Prozeduren, Minimize und  Maximize, aufgeteilt wird.
+Diese führen die dabei die Tätigkeit aus, welche die Entscheidungen des minimierenden bzw. maximierenden Spielers repräsentieren.
+Bei der alternativen Negamax-Implementierung gibt es nur eine Minimax-Prozedur welche die Funktionen beider Spieler übernimmt (Quelle Wikipedia Alpha-Beta-Suche https://de.wikipedia.org/wiki/Alpha-Beta-Suche abgerufen 16.01.2020).
+Um die Standard-Implementierung umzusetzten werden Funktionen $F$ und $G$ für für beide Spieler (Weiß und Schwarz)  definiert, welche das Verhalten beim Treffen auf eine Schachposition $p$ in der Tiefe $t$ definiert.
 \begin{equation*}
     F(p,t) =
     \begin{cases}
@@ -55,9 +62,9 @@ Es werden Funktionen $F$ und $G$ für für beide Spieler (Weiß und Schwarz)  de
         min(F(p1, t-1), F(p2, t-1), ... , F(pl, t-1)) \quad \text{if } t > 0
     \end{cases}
 \end{equation*}
-wobei $p1$, ... , $pl$ die möglichen Positionen sind, welche nach einem Zug aus der Position p resultieren können und $e(p)$ die Eval-Function ist. Es kann dieselbe Eval-Function für beide Funktionen benutzt werden, weil diese weiß-favorisierende Positionen mit positiven Werten- und schwarz-favorisierende Positionen mit negativen Werten bewertet.
+wobei $p1$, ... , $pl$ die möglichen Positionen sind, welche nach einem Zug aus der Position p resultieren können und $e(p)$ die Eval-Function ist.
+Es kann, anders als bei der Negamax-Implementierung, dieselbe Eval-Function für beide Funktionen benutzt werden, weil diese weiß-favorisierende Positionen mit positiven Werten- und schwarz-favorisierende Positionen mit negativen Werten bewertet.
 In Pseudocode sieht ein Minimax folgendermaßen aus:
-
 \begin{algorithm}
     \caption{Minimax}
     \begin{algorithmic}[1]
@@ -70,6 +77,7 @@ In Pseudocode sieht ein Minimax folgendermaßen aus:
         \ForAll {$m$ in $legalMoves$}
         \State p.move(m)
         \State $moveScore \gets minimize(d-1, p)$
+        \State p.undoMove(m)
         \If{$moveScore > score$}
         \State $score \gets moveScore$
         \EndIf
@@ -86,6 +94,7 @@ In Pseudocode sieht ein Minimax folgendermaßen aus:
         \ForAll {$m$ in $legalMoves$}
         \State p.move(m)
         \State $moveScore \gets maximize(d-1, p)$
+        \State p.undoMove(m)
         \If{$moveScore < score$}
         \State $score \gets moveScore$
         \EndIf
@@ -95,3 +104,4 @@ In Pseudocode sieht ein Minimax folgendermaßen aus:
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
+\newpage
