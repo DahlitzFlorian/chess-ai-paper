@@ -1,0 +1,56 @@
+\subsection{Ruhesuche}
+
+Eine weitere Methode den Minimax Algorithmus zu verbessern ist die sogenannte Ruhesuche.
+Im Schach kommt es oftmals zu erzwungenen Zugsequenzen (engl. forced line).
+Das bedeutet, dass die ziehende Seite eine eingeschränkte Wahl hat zu ziehen, zum Beispiel weil der eigene König im Schach steht, oder weil dem Gegner sonst eine vorteilhafte Position ermöglicht wird.
+Ein Problem entsteht nun, wenn die Analysetiefe des Spielbaums mitten in einer erzwungenen Zugsequenzen endet, denn dann liefert die Analyse keine aussagekräftige Evaluation.
+
+Es werden deshalb drei Fälle definiert, bei dessen Eintreffen die Standardsuchtiefe erweitert wird.
+
+\begin{enumerate}
+    \item Der ziehende Spieler befindet sich im Schach.
+    \item Der ziehende Spieler kann mit einem Bauern die letzte Reihe erreichen und diesen befördern.
+    \item Der ziehende Spieler kann mit einen potenziell Vorteilhaften Schlagzug tätigen.
+\end{enumerate}
+
+(Quelle: Dr. Roland Stuckardt Quelle www.stuckardt.de/index.php/schachengine-fischerle/suchtechniken-im-detail/72-ruhesuche-quiescence-search.html abgerufen 21.01.2020).
+
+Die ersten beiden Kriterien sind selbsterklärend, mit der Ausnahme, dass beim befördern der Bauern nur der Fall Dame und der Fall Springer berücksichtigt werden.
+Grund hierfür ist, dass die Bewegungsmöglichkeiten des Turms und des Läufers beide in denen der Dame enthalten sind.
+Es gibt zwar Situationen, in denen durch Pattgefahr ein Unterbefördern (engl. underpromote) in einen Turm beziehungsweise Läufer sinnvoll ist, allerdings ist das eine Seltenheit und es lohnt sich nicht dafür den Spielbaum aufzublähen (Quelle Stuckardt).
+allerdings bedarf das letzte noch eine konkrete Erklärung.
+
+Da erfahrene Schachspieler selten Figuren opfern ohne dafür etwas im Gegenzug zu erhalten, sind die meisten Schlagzüge im Schach ein sogenannter Figurenabtausch.
+Hier schlägt beispielsweise Weiß eine Figur von Schwarz, welche dann wiederum eine Figur von Weiß, meistens mit ähnlichem Wert, schlägt, sodass nach dem Abtausch wieder ein ähnliches Kräftegleichgewicht herrscht, wie vor dem Abtausch.
+Oftmals folgen mehrere Abtausche aufeinander, bei dem dann mehr als nur 2 Figuren geschlagen werden.
+Ein vorteilhafter Schlagzug ist nun ein Schlagzug, bei dem entweder
+
+\begin{enumerate}
+    \item die geschlagene Figur wertvoller ist als die Figur, welche schlägt.
+    \item die angegriffene Figur von weniger gegnerischen Figuren verteidigt wird als sie von eigenen Figuren bedroht wird. Dies kann dazu führen, dass der initiale Schlagzug nicht unbedingt einen direkten Vorteil bringt, der gesamte Figurenabtausch jedoch schon.
+\end{enumerate}
+
+(Quelle Shannon, Stuckardt)
+
+\def\Quiescence{ra8, bc8, qd8, rf8, kg8, pa6, pb7, pc7, pd6, pf7, pg7, ph7, nf6, nd5, Pa4, Nb3, Pb2, Pc2, Rd1, Be2, Pe3, Qf3, Pf2, Pg2, Ph2, Ng3, Rf1, Kg1}
+\setchessboard{setpieces=\Quiescence}
+\begin{center}
+    \chessboard[largeboard, pgfstyle=straightmove, color=red ,linewidth=0.1em,markmove={d1-d5,f3-d5}, color=green,pgfstyle=knightmove, markmove= f6-d5]
+\end{center}
+
+Kriterium a) ist sehr intuitiv verständlich, da der Tausch einer weniger wertvollen Figur für eine wertvollere per Definition vorteilhaft ist, sofern keine anderen negativen Konsequenzen daraus folgen.
+
+Kriterium b) ist da schon etwas komplizierter.
+Hier werden auch Schlagzüge betrachtet, welche gleichwertige oder, wie im oberen Beispiel dargestellt, sogar weniger wertvolle Figuren schlagen, solange das Schlagfeld feldbeherrschungstechnisch majorisiert wird (Stuckardt).
+
+Im Beispiel sieht dann der Figurenabtausch folgendermaßen aus: Weiß schlägt Schwarz' Springer auf d5 mit dem Turm auf d1. Anschließend schlägt Schwarz mit dem Springer auf f6 zurück und zuletzt schlägt Weiß diesen Springer mit der Dame auf f3.
+Am Schluss dieses Abtausches hat Schwarz zwei Springer (6 Bauern) verloren und Weiß einen Turm (5 Bauern).
+Der Tausch favorisiert also Weiß, obwohl der initiale Schlagzug zunächst nicht vorteilhaft ist.
+
+Hierbei ist außerdem wichtig zu erwähnen, dass ein Figurentausch nach Kriterium 2. nicht notwendigerweise zu einem favorisierenden Ergebnis für den Spieler mit der Feldbeherrschung führt.
+Nehmen wir nämlich an, im oben beschriebenen Beispiel steht auf d5 zu Beginn kein schwarzer Springer, sondern ein schwarzer Bauer, so würde gleiche Abtausch mit einem Verlust von 4 Bauern für Schwarz (Bauer + Springer) und einem Verlust von 5 Bauern für weiß (Turm) resultieren, obwohl sich die Feldbeherrschung nicht geändert hat.
+Des Weiteren muss die Stellungsdarstellung Schlagmöglichkeiten, welche sich im Verlauf des Figurenabtausches offenbaren können, zum Beispiel wenn sie vorher durch eigene Figuren blockiert wurden (im Schach sog. Batterien) bereits vorher erkennen (Stuckardt).
+
+Die Ruhesuche wird nun so implementiert, das bis zu einer maximalen Tiefe von 30 Halbzügen nach einer Ruhestellung welche die keine der 3 Bedingungen zulässt gesucht wird.
+Bei dieser Tiefe wurde empirisch gezeigt, dass die meisten Positionen bereits zu einer Ruhestellung gekommen sind.
+Die Selektivität von Kriterium a) und b) stark genug, dass gegebenenfalls auftretende Effizienzprobleme vernachlässigbar sind (Quelle Stuckardt).
