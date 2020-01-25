@@ -1,28 +1,29 @@
 % !TeX root = ../../paper.tex
 \subsection{Bewertungsfunktion}
 
-In der Spieltheorie ist es in der Regel nicht möglich, alle möglichen Zugfolgen aus einer Spielposition heraus bis zum Ende zu verfolgen.
+In der Spieltheorie im Allgemeinen und im Schach im Besonderen ist es in der Regel nicht möglich, alle möglichen Zugfolgen aus einer Spielposition heraus bis zum Ende zu verfolgen.
 Deshalb \glqq [...] wird eine Funktion benötigt, die die Stellung auf dem Spielbrett danach bewertet,
 ob sie für eine der beiden Parteien vorteilhaft oder nachteilig ist.\grqq \ [\cite{Paulsen2009}]
 Diese Funktion wird als \textit{Bewertungsfunktion} bezeichnet.
 Die Bewertungsfunktion setzt sich aus einem materiellen und einer positionellen Komponente zusammen.
-Bei der materiellen Komponente werden die verbleibenden Figuren auf der eigenen Seite gezählt und die Anzahl der gegnerischen Figuren von diesem Wert subtrahiert.
+Bei der materiellen Komponente werden zunächst die vorhandenen weißen Figuren nach Stärke bewertet und aufsummiert.
+Anschließend werden die schwarzen Figuren nach Stärke bewertet, aufsummiert und vom Gesamtwert der weißen Figuren subtrahiert.
 Daraus lassen sich erste Schlussfolgerungen über den Spielstand ziehen.
 Zudem ist es möglich, die derzeitige Spielphase abzuleiten [\cite{Paulsen2009}].
 
-Da es beim Schach aber auch entscheidend ist, auf welchen Positionen sich die einzelnen Figuren befinden und in welcher Position sie zueinander stehen (Bauernstruktur, Königssicherheit), wird zusätzlich zur materiellen Komponente eine positionelle Komponente berechnet.
-Die verschiedenen Positionen werden aus der Spielbrettaufstellung entnommen und fließend mit ihren jeweiligen Gewichtungen in die anschließende Bewertung ein [\cite{Paulsen2009}].
+Da es beim Schach aber auch entscheidend ist, auf welchen Feldern sich die einzelnen Figuren befinden und in welcher Position sie zueinander stehen (Bauernstruktur, Königssicherheit), wird zusätzlich zur materiellen Komponente eine positionelle Komponente berechnet.
+Die verschiedenen Positionen werden aus der Spielbrettaufstellung entnommen und fließen mit ihren jeweiligen Gewichtungen in die anschließende Bewertung ein [\cite{Paulsen2009}].
 
 
-\subsubsection{Einfache Bewertungsfunktion}
+\subsubsection{Einfache Bewertungsfunktion} \label{ch:simple-eval-function}
 
 Das Schachspiel setzt sich aus zwei wichtigen Faktoren zusammen: Einerseits ist abgesehen von der Tatsache, welcher Spieler den ersten Zug macht, keine Zufallskomponete enthalten, andererseits handelt es sich um ein Spiel mit \gls{PI}.
 Diese zwei Faktoren führen dazu, dass bei jeder Schachbrettposition eine der folgenden drei Aussagen gilt [\cite{Shannon1950}]:
 
 \begin{enumerate}
-    \item Es handelt sich um eine gewonnene Position für Weiß. Somit kann Weiß einen Sieg forcieren, wobei Schwarz verteidigen.
+    \item Es handelt sich um eine gewonnene Position für Weiß. Somit kann Weiß einen Sieg forcieren, wobei Schwarz verteidigt.
     \item Es handelt sich um eine gewonnene Position für Schwarz. Somit kann Schwarz einen Sieg forcieren, wobei Weiß spielt.
-    \item Es handelt sich um eine unentschiedene Position für beide Parteien. Somit kann es nur ein Unentschieden am Ende geben, falls beide Parteien dies forcieren und keine Fehler machen.
+    \item Es handelt sich um eine ausgeglichene Position für beide Parteien. Somit kann es nur ein Unentschieden am Ende geben, falls beide Parteien keine Fehler machen.
 \end{enumerate}
 
 \noindent Bei einigen Spielen (so auch beim Schach) lässt sich aus den genannten zwei Faktoren und den daraus resultierenden drei Aussagen eine \textit{einfache Bewertungsfunktion} \(\displaystyle f(P)\) ableiten, wobei \(\displaystyle P\) die Schachbrettposition bezeichnet.
@@ -83,7 +84,7 @@ Die ersten beiden Gleichungen~\ref{eq:piece-values_first-result} und~\ref{eq:pie
 \end{equation}
 
 \noindent Durch die hier beschriebenen Gleichungen ist der vierte Punkt implizit erfüllt.
-Zu guter Letzt wird noch eine Gleichung benötigt, die die Überlegenheit einer Dame-Bauer-Kombination gegenüber zwei Türmen darstellt.
+Zu guter Letzt wird noch eine Gleichung benötigt, die das Verhältnis einer Dame-Bauer-Kombination gegenüber zwei Türmen darstellt.
 Dies ist in Gleichung~\ref{eq:piece-values_final-result-missing} abgebildet.
 
 \begin{equation} \label{eq:piece-values_final-result-missing}
@@ -151,6 +152,133 @@ Gleichung~\ref{eq:piece-squared-tables_pawns-matrix} zeigt mittels einer Matrix 
 \end{pmatrix}
 \end{equation}
 
+\bigskip
+
+\noindent Eine genauere Erläuterung zu den einzelnen Werten pro Spielposition der Bauern kann bei [\cite{Wiki2018}] nachgelesen werden.
+
+Springer sind aufgrund ihrer Bewegungsart am effektivsten in der Mitte des Spielfeldes, weshalb sie auf den mittleren Positionen höhere Punktwerte erhalten.
+Demgegenüber erhalten sie negative Punktwerte für Randpositionen, da diese ihren Bewegungsradius einschränken [\cite{Wiki2018}].
+Gleichung~\ref{eq:piece-squared-tables_knights-matrix} zeigt die entsprechenden Werte für die Springerpositionen.
+
+\begin{equation} \label{eq:piece-squared-tables_knights-matrix}
+\begin{pmatrix}
+-50 & -40 & -30 & -30 & -30 & -30 & -40 & -50 \\
+-40 & -20 & 0 & 0 & 0 & 0 & -20 & -40 \\
+-30 & 0 & 10 & 15 & 15 & 10 & 0 & -30 \\
+-30 & 5 & 15 & 20 & 20 & 15 & 5 & -30 \\
+-30 & 0 & 15 & 20 & 20 & 15 & 0 & -30 \\
+-30 & 5 & 10 & 15 & 15 & 10 & 5 & -30 \\
+-40 & -20 & 0 & 5 & 5 & 0 & -20 & -40 \\
+-50 & -40 & -30 & -30 & -30 & -30 & -40 & -50
+\end{pmatrix}
+\end{equation}
+
+\bigskip
+
+\noindent Läufer erhalten zusätzliche Punkte für zentrale Positionen, da sie dort, ähnlich wie Springer, den größten Bewegungsradius besitzen.
+Des Weiteren erhalten sie für Randpositionen Abzüge, wobei die Positionen in den Ecken des Spielbretts besonders negativ bewertet sind [\cite{Wiki2018}].
+Eine positionsbezogene Punktwerteaufstellung mittels einer Matrix ist in Gleichung~\ref{eq:piece-squared-tables_bishops-matrix} abgebildet.
+
+\begin{equation} \label{eq:piece-squared-tables_bishops-matrix}
+\begin{pmatrix}
+-20 & -10 & -10 & -10 & -10 & -10 & -10 & -20 \\
+-10 & 0 & 0 & 0 & 0 & 0 & 0 & -10 \\
+-10 & 0 & 5 & 10 & 10 & 5 & 0 & -10 \\
+-10 & 5 & 5 & 10 & 10 & 5 & 5 & -10 \\
+-10 & 0 & 10 & 10 & 10 & 10 & 0 & -10 \\
+-10 & 10 & 10 & 10 & 10 & 10 & 10 & -10 \\
+-10 & 5 & 0 & 0 & 0 & 0 & 5 & -10 \\
+-20 & -10 & -10 & -10 & -10 & -10 & -10 & -20
+\end{pmatrix}
+\end{equation}
+
+\bigskip
+
+\noindent Tomasz Michniewski weißt den Türmen keine stark unterschiedlichen positionsbezogenen Punktwerte zu, wie er dies bei den Springern und Läufern tut.
+Die Türme erhalten lediglich einen Bonus für den siebten Rang und negative Werte für die Außenpositionen A und H [\cite{Wiki2018}] (siehe Gleichung~\ref{eq:piece-squared-tables_rooks-matrix}).
+
+\begin{equation} \label{eq:piece-squared-tables_rooks-matrix}
+\begin{pmatrix}
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+5 & 10 & 10 & 10 & 10 & 10 & 10 & 5 \\
+-5 & 0 & 0 & 0 & 0 & 0 & 0 & -5 \\
+-5 & 0 & 0 & 0 & 0 & 0 & 0 & -5 \\
+-5 & 0 & 0 & 0 & 0 & 0 & 0 & -5 \\
+-5 & 0 & 0 & 0 & 0 & 0 & 0 & -5 \\
+-5 & 0 & 0 & 0 & 0 & 0 & 0 & -5 \\
+0 & 0 & 0 & 5 & 5 & 0 & 0 & 0
+\end{pmatrix}
+\end{equation}
+
+\bigskip
+
+\noindent Die Erstellung einer Figuren-Quadrat Tabelle für die Königin dient nicht dazu, gute Stellungen zu belohnen, sondern schlechte mit Abzügen zu versehen.
+Dennoch lässt sich aus der von Tomasz Michniewski aufgestellten Darstellung ableiten, dass die Königin in der Mitte des Spielbretts aufhalten sollte [\cite{Wiki2018}] (siehe Gleichung~\ref{eq:piece-squared-tables_queen-matrix}).
+
+\begin{equation} \label{eq:piece-squared-tables_queen-matrix}
+\begin{pmatrix}
+-20 & -10 & -10 & -5 & -5 & -10 & -10 & -20 \\
+-10 & 0 & 0 & 0 & 0 & 0 & 0 & -10 \\
+-10 & 0 & 5 & 5 & 5 & 5 & 0 & -10 \\
+-5 & 0 & 5 & 5 & 5 & 5 & 0 & -5 \\
+0 & 0 & 5 & 5 & 5 & 5 & 0 & -5 \\
+-10 & 5 & 5 & 5 & 5 & 5 & 0 & -10 \\
+-10 & 0 & 5 & 0 & 0 & 0 & 0 & -10 \\
+-20 & -10 & -10 & -5 & -5 & -10 & -10 & -20
+\end{pmatrix}
+\end{equation}
+
+\bigskip
+
+\noindent Zu guter Letzt werden zwei Figuren-Quadrat Tabellen für den König aufgestellt.
+Die erste Tabelle (siehe Gleichung~\ref{eq:piece-squared-tables_king-matrix-1}) ist für mittlere Phase des Spiels gedacht.
+Hierbei wird deutlich, dass der König zurückgehalten und hinter der Bauernlinie gehalten werden sollte [\cite{Wiki2018}].
+
+\begin{equation} \label{eq:piece-squared-tables_king-matrix-1}
+\begin{pmatrix}
+-30 & -40 & -40 & -50 & -50 & -40 & -40 & -30 \\
+-30 & -40 & -40 & -50 & -50 & -40 & -40 & -30 \\
+-30 & -40 & -40 & -50 & -50 & -40 & -40 & -30 \\
+-30 & -40 & -40 & -50 & -50 & -40 & -40 & -30 \\
+-20 & -30 & -30 & -40 & -40 & -30 & -30 & -20 \\
+-10 & -20 & -20 & -20 & -20 & -20 & -20 & -10 \\
+20 & 20 & 0 & 0 & 0 & 0 & 20 & 20 \\
+20 & 30 & 10 & 0 & 0 & 10 & 30 & 20
+\end{pmatrix}
+\end{equation}
+
+\bigskip
+
+\noindent Für die Endspielphase sieht die Tabelle für den König jedoch anders aus (siehe Gleichung~\ref{eq:piece-squared-tables_king-matrix-2}).
+Randpositionen schränken den König in seiner Bewegung zusätzlich ein und sind gerade in der Endphase von erhöhtem Risiko, weshalb diese Positionen besonders negativ bewertet sind.
+Demgegenüber sind die zentralen Positionen besonders positiv bewertet [\cite{Wiki2018}].
+
+\begin{equation} \label{eq:piece-squared-tables_king-matrix-2}
+\begin{pmatrix}
+-50 & -40 & -30 & -20 & -20 & -30 & -40 & -50 \\
+-30 & -20 & -10 & 0 & 0 & -10 & -20 & -30 \\
+-30 & -10 & 20 & 30 & 30 & 20 & -10 & -30 \\
+-30 & -10 & 30 & 40 & 40 & 30 & -10 & -30 \\
+-30 & -10 & 30 & 40 & 40 & 30 & -10 & -30 \\
+-30 & -10 & 20 & 30 & 30 & 20 & -10 & -30 \\
+-30 & -30 & 0 & 0 & 0 & 0 & -30 & -30 \\
+-50 & -30 & -30 & -30 & -30 & -30 & -30 & -50
+\end{pmatrix}
+\end{equation}
+
+\bigskip
+
+\noindent Zusätzlich zu den eben beschriebenen Figuren-Quadrat Tabellen beschreibt Tomasz Michniewski, wann die Endphase des Spiel beginnt.
+Diese beginnt nach ihm, wenn eine der beiden folgenden Aussagen zutrifft [\cite{Wiki2018}]:
+
+\begin{enumerate}
+    \item Beide Seiten besitzen keine Königin
+    \item Beide Seiten haben neben der Königin entweder keine weiteren Figuren oder aber maximal eine kleine Figur
+\end{enumerate}
+
 
 \subsubsection{Weitere Bewertungsfunktionen}
+
+Das in Kapitel \textit{\ref{ch:simple-eval-function} Einfache Bewertungsfunktion} beschriebene Verfahren für eine (einfache) Bewertungsfunktion ist nicht die einzige Möglichkeit zur Evaluierung des Spielzustandes.
+Da eine durchgeführte Recherche jedoch keine klaren Abgrenzungen zwischen Arten von Bewertungsfunktionen aufzeigte und die beschriebene einfache Bewertungsfunktion in den meisten Fällen vollkommen ausreichend ist, wird an dieser Stelle auf eine weitere Ausführung verzichtet.
 
