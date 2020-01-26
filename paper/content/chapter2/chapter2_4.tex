@@ -58,10 +58,11 @@ Deshalb steht fest, dass weiß Ka3 nicht spielen wird und die restlichen sechs m
 
 Um die Alpha-Beta-Suche zu implementieren, wird eine weitere Methode benötigt, die nach der Erkenntnis, dass sich das Fortsetzen der Analyse des Teilbaums nicht weiter lohnt, den Algorithmus für diesen Teilbaum stoppt.
 Hierfür wird der Pseudocode aus dem Kapitel Minimax mit den beiden beschriebenen Variablen Alpha und Beta erweitert.
-Diese werden zu Beginn mit den jeweils schlechtmöglichsten Werten für Weiß und Schwarz belegt ($-\infty$ und $\infty$) und den Prozeduren Minimize und Maximize, wie die Tiefe, als Argument übergeben.
+Diese werden zu Beginn mit den jeweils schlechtmöglichsten Werten für Weiß und Schwarz belegt ($-\infty$ und $\infty$) und den Prozeduren Minimize (Algorithmus~\ref{alg:alpha-beta_minimize}) und Maximize (Algorithmus~\ref{alg:alpha-beta_maximize}), wie die Tiefe, als Argument übergeben.
 
 \begin{algorithm}
-    \caption{Alpha-Beta}
+    \caption{MAXIMIZE Funktion}
+    \label{alg:alpha-beta_maximize}
     \begin{algorithmic}[1]
         \Function{maximize}{Integer $d$, Position $p$, Float $alpha$, Float $beta$}
         \If{$d < 1$}
@@ -83,6 +84,13 @@ Diese werden zu Beginn mit den jeweils schlechtmöglichsten Werten für Weiß un
         \EndIf
         \State \Return $score$
         \EndFunction
+    \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+    \caption{MINIMIZE Funktion}
+    \label{alg:alpha-beta_minimize}
+    \begin{algorithmic}[1]
         \Function{minimize}{Integer $d$, Position $p$, Float $alpha$, Float $beta$}
         \If{$d < 1$}
         \State \Return evaluate($p$)
