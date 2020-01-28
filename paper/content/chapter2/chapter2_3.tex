@@ -34,9 +34,9 @@ Am Ende dieses Prozesses ist von der Ausgangslage des Spiels erkennbar, dass Spi
 Beim Schach ist es jedoch in der Regel nicht möglich alle Positionen bis zum Spielende zu analysieren.
 Im Gegenteil zu Tic-Tac-Toe, bei dem der Spielbaum maximal die Tiefe neun erreicht, kann beim Schach theoretisch eine Tiefe von 5899 erreicht werden.
 Da es im Verlauf eines Schachspiels durchschnittlich $x$ mögliche Züge für den Spieler am Zug gibt, gibt es ab einer bestimmten Tiefe $t$, $x^t$ zu analysierenden Positionen.
-Weil sogar schnelle Computer bei diesem exponentiell wachsenden Baum irgendwann zu hohe Rechenzeiten benötigen, muss man sich auf eine maximale Tiefe festlegen bis zu der man den Spielbaum analysiert.
-Diese ist je nach Anspruch, bei präzisen Evaluationen tiefer, bei schnellen Evaluationen weniger tief.\\
-Um den Minimax Algorithmus auf Programmierebene umzusetzen, werden folgende Methoden benötigt [\cite{Shannon1950}].
+Weil sogar schnelle Computer bei diesem exponentiell wachsenden Baum zu hohe Rechenzeiten benötigen, muss eine maximale Tiefe, bis zu der der Spielbaum analysiert wird, festgelegt werden.
+Diese ist je nach Anspruch bei präzisen Evaluationen tiefer, bei schnellen Evaluationen weniger tief.
+Um den Minimax Algorithmus auf Programmierebene umzusetzen, werden folgende Methoden benötigt [\cite{Shannon1950}]:
 
 \begin{itemize}
     \item Sammelt für eine Position die erlaubten Züge. Hierfür muss sowohl auf verschiedenen Zugarten der Figuren und Schach eingegangen werden, als auch Sonderzüge wie En-Passant und die Rochade berücksichtigt werden.
@@ -45,33 +45,35 @@ Um den Minimax Algorithmus auf Programmierebene umzusetzen, werden folgende Meth
     \item Kann für eine Position Schachzüge ausführen und diese auch rückgängig machen
 \end{itemize}
 
-Beim Umsetzen der Kernaufgabe des Minimax-Algorithmus wird der Ansatz von [\cite{Knuth1975}] übernommen.
-Außerdem wird die Standard-Implementierung verwendet, bei denen der gesamte Algorithmus in zwei Prozeduren, Minimize und  Maximize, aufgeteilt wird.
-Diese führen die dabei die Tätigkeit aus, welche die Entscheidungen des minimierenden bzw. maximierenden Spielers repräsentieren.
+Bei der Umsetzung der Kernaufgabe des Minimax-Algorithmus wird der Ansatz von [\cite{Knuth1975}] übernommen.
+Außerdem wird die Standard-Implementierung verwendet, bei der der gesamte Algorithmus in zwei Prozeduren, Minimize und  Maximize, aufgeteilt wird.
+Diese führen dabei jene Tätigkeiten aus, welche die Entscheidungen des minimierenden bzw. maximierenden Spielers repräsentieren.
 Bei der alternativen Negamax-Implementierung gibt es nur eine Minimax-Prozedur welche die Funktionen beider Spieler übernimmt.
-Um die Standard-Implementierung umzusetzten werden Funktionen $F$ und $G$ für für beide Spieler (Weiß und Schwarz)  definiert, welche das Verhalten beim Treffen auf eine Schachposition $p$ in der Tiefe $t$ definiert.
+Um die Standard-Im\-ple\-men\-tie\-rung umzusetzten, werden Funktionen $F$ (Gleichung~\ref{eq:minimax_white-players-function}) für den Spieler Weiß und $G$ (Gleichung~\ref{eq:minimax_black-players-function}) für Spieler Schwarz definiert. Die beiden Funktionen definieren das Verhalten der Spieler beim Treffen auf eine Schachposition $p$ in der Tiefe $t$.
 
-\begin{equation*}
+\begin{equation} \label{eq:minimax_white-players-function}
     F(p,t) =
     \begin{cases}
         e(p) \quad \text{if }t=0,\\
         max(G(p1, t-1), G(p2, t-1), ... , G(pl, t-1)) \quad \text{if } t > 0
     \end{cases}
-\end{equation*}
-\begin{equation*}
+\end{equation}
+
+\begin{equation} \label{eq:minimax_black-players-function}
     G(p,t) =
     \begin{cases}
         e(p) \quad \text{if }t=0,\\
         min(F(p1, t-1), F(p2, t-1), ... , F(pl, t-1)) \quad \text{if } t > 0
     \end{cases}
-\end{equation*}
+\end{equation}
 
-Dabei sind $p1$, ... , $pl$ die möglichen Positionen, welche nach einem Zug aus der Position p resultieren können und $e(p)$ die Eval-Function ist.
-Es kann, anders als bei der Negamax-Implementierung, dieselbe Eval-Function für beide Funktionen benutzt werden, weil diese weiß-favorisierende Positionen mit positiven Werten- und schwarz-favorisierende Positionen mit negativen Werten bewertet.
-In Pseudocode sieht ein Minimax folgendermaßen aus:
+Dabei sind $p1$, ... , $pl$ die möglichen Positionen, welche nach einem Zug aus der Position p resultieren können und $e(p)$ die Bewertungsfunktion ist.
+Es kann, anders als bei der Negamax-Implementierung, dieselbe Bewertungsfunktion für beide Funktionen benutzt werden, weil diese weiß-favorisierende Positionen mit positiven Werten- und schwarz-favorisierende Positionen mit negativen Werten bewertet.
+Der Pseudocode für einen Minimax ist in Algorithmus~\ref{alg:minimax_minimax} dargestellt.
 
 \begin{algorithm}[H]
     \caption{Minimax}
+    \label{alg:minimax_minimax}
     \begin{algorithmic}[1]
         \Function{maximize}{Integer $d$, Position $p$}
         \If{$d < 1$}
