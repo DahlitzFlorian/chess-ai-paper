@@ -1,46 +1,280 @@
 % !TeX root = ../../paper.tex
-\subsection{Vorsortieren}
+\subsection{Bewertungsfunktion und -heuristik}
 
-Damit der Alpha-Beta Algorithmus, der in Kapitel~\ref{ch:alpha-beta-pruning} beschrieben wird, bestmöglich wirken kann, müssen die aussichtsreichsten Züge zuerst durchsucht werden [\cite{Wiki2019}].
-Es existieren verschiedenste Herangehensweisen, dies umzusetzen.
-Da die möglichen Spielzüge in einer Baumstruktur abgebildet werden können und ein Schachcomputer für den allgemeinen Bedarf möglichst wenig Speicher benötigen sollte, bietet sich das \textit{Depth-First} Suchverfahren (zu dt. etwa \textit{erstmalige Tiefensuche}) an.
-Dabei werden zuerst tieferliegende Knoten ausgewertet, bevor benachbarte Knoten ausgewertet werden.
-Das Depth-First Verfahren bietet den Vorteil, dass nur jeweils ein Pfad des Baumes im Speicher gehalten werden muss [\cite{Wiki2019b}].
-Abbildung~\ref{fig:pre-sorting_depth-first-tree} zeigt eine beispielhafte Evaluierung eines Baumes nach dem Depth-First Verfahren.
+In der Spieltheorie im Allgemeinen und im Schach im Besonderen ist es in der Regel nicht möglich, alle möglichen Zugfolgen aus einer Spielposition heraus bis zum Ende zu verfolgen.
+Deshalb \glqq [...] wird eine Funktion benötigt, die die Stellung auf dem Spielbrett danach bewertet,
+ob sie für eine der beiden Parteien vorteilhaft oder nachteilig ist.\grqq \ [\cite{Paulsen2009}]
+Diese Funktion wird als \textit{Bewertungsfunktion} bezeichnet.
+Die Bewertungsfunktion setzt sich aus einem materiellen und einer positionellen Komponente zusammen.
+Bei der materiellen Komponente werden zunächst die vorhandenen weißen Figuren nach Stärke bewertet und aufsummiert.
+Anschließend werden die schwarzen Figuren nach Stärke bewertet, aufsummiert und vom Gesamtwert der weißen Figuren subtrahiert.
+Daraus lassen sich erste Schlussfolgerungen über den Spielstand ziehen.
+Zudem ist es möglich, die derzeitige Spielphase abzuleiten [\cite{Paulsen2009}].
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.6\textwidth]{images/theory/pre-sorting_depth-first-tree.png}
-    \caption[Bespielhafter Depth-First Baum]{Bespielhafter Depth-First Baum [\cite{Wiki2019b}]}
-    \label{fig:pre-sorting_depth-first-tree}
-\end{figure}
+Da es beim Schach aber auch entscheidend ist, auf welchen Feldern sich die einzelnen Figuren befinden und in welcher Position sie zueinander stehen (Bauernstruktur, Königssicherheit), wird zusätzlich zur materiellen Komponente eine positionelle Komponente berechnet.
+Die verschiedenen Positionen werden aus der Spielbrettaufstellung entnommen und fließen mit ihren jeweiligen Gewichtungen in die anschließende Bewertung ein [\cite{Paulsen2009}].
 
-\noindent Weil ein Schachcomputer, der in einem Spiel gegen einen Menschen Einsatz findet, in einer für seinen Gegner vertretbaren Zeit antworten muss, werden Zeitmanagementstrategien benötigt.
-Diese legen fest, in welcher Reihenfolge die möglichen Spielzüge ausgewerten werden, um die aussichtsreichsten Spielzüge möglichst am Anfang durchzurechnen.
-Bei den Depth-First Suchverfahren hat sich das \textit{Iterative Deepening} (zu dt. etwa \textit{iterative Vertiefung}) als grundlegende Zeitmanagementstrategie durchgesetzt.
-Bei dieser Zeitmanagementstrategie werden alle möglichen Pfade eines Spielbaumes bis zu einer Tiefe von~0 ausgewertet.
-Ist nach Abschluss der Auswertung die verfügbare Zeit des Spielzugs noch nicht abgelaufen, so wird die Suchtiefe um eins erhöht und eine weitere Evaluierungsphase beginnt [\cite{Wiki2019a}].
-Abbildung~\ref{fig:pre-sorting_iterative-deepening} stellt diesen Vorgang grafisch an einem Beispiel dar.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.6\textwidth]{images/theory/pre-sorting_iterative-deepening.png}
-    \caption[Grafische Darstellung der Zeitmanagementstrategie Iterative Deepening]{Grafische Darstellung der Zeitmanagementstrategie Iterative Deepening}
-    \label{fig:pre-sorting_iterative-deepening}
-\end{figure}
+\subsubsection{Einfache Bewertungsheuristik} \label{ch:simple-eval-function}
 
-\noindent Bei der folgenden beispielhafter Erläuterung des Iterative Deepening wird angenommen, dass die Knoten von links nach recht abgearbeitet werden.
-Im ersten Durchlauf wird bei einer Tiefe von~0 nur der Knoten A evaluiert.
-Anschließend wird die Tiefe um eins erhöht und die erneute Evaluierung des Spielbaumes wird in folgender Reihenfolge vorgenommen: A B G E.
-Somit sind dem Schachcomputer jetzt bereits alle möglichen Spielzüge bis zu einer Tiefe von eins bekannt, sodass er bei Abbruch des Spielzuges aufgrund der abgelaufenen Zeit bereits eine mögliche gute Entscheidung fällen kann.
-Gleichung~\ref{eq:pre-sorting_iterative-deepening-example} zeigt die Reihenfolge der ausgewerteten Knoten für die Tiefen~2 und~3.
+Das Schachspiel setzt sich aus zwei wichtigen Faktoren zusammen: Einerseits ist abgesehen von der Tatsache, welcher Spieler den ersten Zug macht, keine Zufallskomponete enthalten, andererseits handelt es sich um ein Spiel mit perfekter Information.
+Diese zwei Faktoren führen dazu, dass bei jeder Stellung eine der folgenden drei Aussagen gilt [\cite{Shannon1950}]:
 
-\begin{align} \label{eq:pre-sorting_iterative-deepening-example}
+\begin{enumerate}
+    \item Es handelt sich um eine gewonnene Position für Weiß. Somit kann Weiß einen Sieg forcieren, wobei Schwarz verteidigt.
+    \item Es handelt sich um eine gewonnene Position für Schwarz. Somit kann Schwarz einen Sieg forcieren, wobei Weiß spielt.
+    \item Es handelt sich um eine ausgeglichene Position für beide Parteien. Somit kann es nur ein Unentschieden am Ende geben, falls beide Parteien keine Fehler machen.
+\end{enumerate}
+
+\noindent Bei einigen Spielen (so auch beim Schach) lässt sich aus den genannten zwei Faktoren und den daraus resultierenden drei Aussagen eine \textit{Bewertungsfunktion} \(\displaystyle f(P)\) ableiten, wobei \(\displaystyle P\) die Stellung bezeichnet.
+Der Rückgabewert der Funktion ist die Kategorie, in die die jeweilige Position gehört: Sieg (+1), Unentschieden (0), Niederlage (-1).
+Zum Zeitpunkt des Zuges des Schachcomputers werden die Werte \(\displaystyle f(P)\) für alle Positionen nach möglichen Halbzügen berechnet.
+Der Zug mit dem maximalen Wert wird am Ende ausgeführt [\cite{Shannon1950}].
+
+Es ist nicht realisierbar, alle Spielzugmöglichkeiten durchzurechnen.
+Aus diesem Grund werden Approximationen der Bewertungsfunktion entworfen.
+Diese Approximationen werden als Heuristiken bzw. als Bewertungsheuristiken bezeichnet.
+Im Zuge dieser Arbeit wird die einfache Bewertungsheuristik nach Tomasz Michniewski verwendet, die ursprünglich in der \textit{Polish chess programming discussion list (progszach)} veröffentlicht wurde und im \href{https://www.chessprogramming.org/Main_Page}{chessprogramming.org} Wiki beschrieben wird.
+Die Bewertungsheuristik ist bewusst einfach gehalten, da sie aufgrund ihrer Einfachheit schneller ist [\cite{Wiki2018}].
+Die von Tomasz Michniewski beschriebene einfache Bewertungsheuristik wird in zwei Teilen dargestellt: Figurenwerte (engl. \textit{simple piece values}) und figurenspezifische Positionstabellen (engl. \textit{piece-square tables}).
+
+Mit der Festlegung von Werten je Figur werden vier verschiedene Ziele erreicht:
+
+\begin{enumerate}
+    \item Vermeidung des Austauschs einer leichten Figur gegen drei Bauern
+    \item Dem Computer signalisieren, dass das Halten des Läuferpaars vorteilhaft ist
+    \item Vermeidung des Austauschs von zwei leichten Figuren gegen einen Turm und einen Bauern
+    \item Ein Turm und zwei Bauern reichen aus, um gegen zwei leichte Figuren zu gewinnen
+\end{enumerate}
+
+\noindent Der erste Punkt wird durch Formel~\ref{eq:piece-values_first-result} erfüllt.
+
+\begin{equation} \label{eq:piece-values_first-result}
 \begin{split}
-    & \text{Tiefe 2: } A\ B\ D\ C\ G\ C\ E\ F\\
-    & \text{Tiefe 3: } A\ B\ D\ C\ G\ G\ C\ B\ E\ F
+    L > 3B \\
+    S > 3B
 \end{split}
-\end{align}
+\end{equation}
 
-Das Iterative Deepening ist asymptotisch optimal bei der Baumsuche per Brute-Force Verfahren in Bezug auf Zeit, Raum und Länge der Lösung.
-Darüber hinaus wurde es bereits erfolgreich in Schachprogrammen verwendet und ist das einzig bekannte algorithmische Verfahren, dass in der Lage ist, optimale Lösungen für zufällig generierte 15-Puzzle Felder zu finden, die zudem innerhalb einer praktikablen Ressourcenbeschränkung liegen [\cite{Korf1985}].
+\noindent Zwar gibt es durchaus Positionen, in denen drei Bauern wertvoller als eine leichte Figur sind, jedoch ist es im Allgemeinen besser eine leichte Figur zu behalten, da im Spielverlauf die Bauern individuell attackiert werden können und deren Wert als Dreier-Figuren-Gespann verloren geht [\cite{Wiki2018}].
+Der zweite genannte Punkt wird durch Formel~\ref{eq:piece-values_second-result} erreicht.
+
+\begin{equation} \label{eq:piece-values_second-result}
+    L > S
+\end{equation}
+
+\noindent Zwar garantiert diese Formel kein Halten des Läuferpaars, da am Ende ein Läufer gegen einen Springer stehen kann, dennoch ist es eine Tatsache, dass Spieler oftmals Springer mit Läufern schlagen und nicht Läufer mit Springern [\cite{Wiki2018}].
+Die ersten beiden Formeln~\ref{eq:piece-values_first-result} und~\ref{eq:piece-values_second-result} führen zusammen zu Formel~\ref{eq:piece-values_first-and-second-result-combined}.
+
+\begin{equation} \label{eq:piece-values_first-and-second-result-combined}
+    L > S > 3B
+\end{equation}
+
+\noindent Der dritte Punkt wird zwar durch Formel~\ref{eq:piece-values_third-result} erreicht, dennoch haben Spiele wie jenes zwischen Karpov und Kasparov gezeigt, dass bereits ein Turm und zwei Bauern ausreichen, um gegen zwei leichte Figuren gewinnen zu können.
+
+\begin{equation} \label{eq:piece-values_third-result}
+    L + S > T + B
+\end{equation}
+
+\noindent Aus diesem Grund wird die Formel~\ref{eq:piece-values_third-result}, die zu Formel~\ref{eq:piece-values_third-result-full} erweitert werden kann, um einen Faktor erweitert, woraus sich Formel~\ref{eq:piece-values_third-result-enhanced} ergibt [\cite{Wiki2018}].
+
+\begin{equation} \label{eq:piece-values_third-result-full}
+    T + 2B > L + S > T + B
+\end{equation}
+
+\begin{equation} \label{eq:piece-values_third-result-enhanced}
+    L + S > T + 1.5B
+\end{equation}
+
+\noindent Durch die hier beschriebenen Formeln ist somit auch der vierte Punkt erfüllt.
+Zu guter Letzt wird noch eine Formel benötigt, die das Verhältnis einer Dame-Bauer-Kombination gegenüber zwei Türmen darstellt.
+Dies ist in Formel~\ref{eq:piece-values_final-result-missing} abgebildet.
+
+\begin{equation} \label{eq:piece-values_final-result-missing}
+    D + B = 2T
+\end{equation}
+
+\noindent Somit erhält man das Gleichungssystem, das in Formel~\ref{eq:piece-values_final-result} dargestellt ist.
+
+\begin{equation} \label{eq:piece-values_final-result}
+\begin{split}
+    L > S > 3B \\
+    L + S = T + 1.5B \\
+    D + B = 2T
+\end{split}
+\end{equation}
+
+\noindent Dieses Gleichungssystem wird durch die in Tabelle~\ref{tb:piece-values_satified} gelisteten Werte erfüllt.
+Diese Werte wurden von Tomasz Michniewski festgelegt mit Ausnahme des Wertes des Königs.
+Dieser Wert stammt aus dem Paper von Claude Shannon, wobei dieser an der Stelle dem König den Wert 200 gibt, was durch die Umrechnung in Hundertstelbauer zu 20000 führt [\cite{Shannon1950}].
+Der Wert für den König ist bewusst so hoch gewählt worden, da der Verlust des Königs automatisch zur Niederlage führt.
+Daraus folgt zudem, dass der Verlust des Königs durch die materielle Komponente der Bewertungsheuristik einfacher erkannt werden kann.
+Zu guter Letzt sei angemerkt, dass die Wahl der Figurenwerte dazu führt, dass diese in einer 2~Byte vorzeichenbehafteten Ganzzahl abgelegt werden können, da der Gesamtwert aller Spielfiguren einer Seite rund 30300 beträgt [\cite{Wiki2018}].
+
+\begin{table}
+    \centering
+    \begin{tabular}{| L{0.47\textwidth} | R{0.47\textwidth} |}
+        \hline
+        \thead{Figur} & \thead{Wert} \\
+        \hline
+        Bauer & 100 \\
+        \hline
+        Springer & 320 \\
+        \hline
+        Läufer & 330 \\
+        \hline
+        Turm & 500 \\
+        \hline
+        Dame & 900 \\
+        \hline
+        König & 20000 \\
+        \hline
+    \end{tabular}
+    \caption[Figurenwerte in Hundertstelbauer]{Figurenwerte in Hundertstelbauer [\cite{Wiki2018}]}
+    \label{tb:piece-values_satified}
+\end{table}
+
+Nachdem die Figurenwerte ausführlich dargelegt wurden, werden nun figurenspezifische Positionstabellen erstellt.
+Diese haben die Aufgabe für gut positionierte Figuren eine \textit{Belohnung} und für schlecht positionierte Figuren \textit{Abzüge} zu erteilen [\cite{Wiki2018}].
+
+Für die Bauern gilt, dass deren Vorwärtsbewegung prinzipiell belohnt wird.
+Des Weiteren werden die zentralen Bauern (D2, E2) negativ bewertet, sollten sie sich nicht bewegen.
+Das rührt daher, da Bauern direkt vor dem König-Dame-Paar als hindernd angesehen werden, weil es im Besonderen den Bewegungsfreiraum der beiden Läufer zu Beginn des Spiels einschränkt.[\cite{Wiki2018}].
+Formel~\ref{eq:piece-squared-tables_pawns-matrix} zeigt mittels einer Matrix die positionsbezogenen Werte für Bauern auf dem Spielbrett.
+
+\begin{equation} \label{eq:piece-squared-tables_pawns-matrix}
+\begin{pmatrix}
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+50 & 50 & 50 & 50 & 50 & 50 & 50 & 50 \\
+10 & 10 & 20 & 30 & 30 & 20 & 10 & 10 \\
+5 & 5 & 10 & 25 & 25 & 10 & 5 & 5 \\
+0 & 0 & 0 & 20 & 20 & 0 & 0 & 0 \\
+5 & -5 & -10 & 0 & 0 & -10 & -5 & 5 \\
+5 & 10 & 10 & -20 & -20 & 10 & 10 & 5 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0
+\end{pmatrix}
+\end{equation}
+
+\bigskip
+
+\noindent Eine genauere Erläuterung zu den einzelnen Werten pro Spielposition der Bauern kann bei [\cite{Wiki2018}] nachgelesen werden.
+
+Springer sind aufgrund ihrer Bewegungsart am effektivsten in der Mitte des Spielfeldes, weshalb sie auf den mittleren Positionen höhere Punktwerte erhalten.
+Demgegenüber erhalten sie negative Punktwerte für Randpositionen, da diese ihren Bewegungsradius einschränken [\cite{Wiki2018}].
+Formel~\ref{eq:piece-squared-tables_knights-matrix} zeigt die entsprechenden Werte für die Springerpositionen.
+
+\begin{equation} \label{eq:piece-squared-tables_knights-matrix}
+\begin{pmatrix}
+-50 & -40 & -30 & -30 & -30 & -30 & -40 & -50 \\
+-40 & -20 & 0 & 0 & 0 & 0 & -20 & -40 \\
+-30 & 0 & 10 & 15 & 15 & 10 & 0 & -30 \\
+-30 & 5 & 15 & 20 & 20 & 15 & 5 & -30 \\
+-30 & 0 & 15 & 20 & 20 & 15 & 0 & -30 \\
+-30 & 5 & 10 & 15 & 15 & 10 & 5 & -30 \\
+-40 & -20 & 0 & 5 & 5 & 0 & -20 & -40 \\
+-50 & -40 & -30 & -30 & -30 & -30 & -40 & -50
+\end{pmatrix}
+\end{equation}
+
+\bigskip
+
+\noindent Läufer erhalten zusätzliche Punkte für zentrale Positionen, da sie dort, ähnlich wie Springer, den größten Bewegungsradius besitzen.
+Des Weiteren erhalten sie für Randpositionen Abzüge, wobei die Positionen in den Ecken des Spielbretts besonders negativ bewertet sind [\cite{Wiki2018}].
+Eine positionsbezogene Punktwerteaufstellung mittels einer Matrix ist in Formel~\ref{eq:piece-squared-tables_bishops-matrix} abgebildet.
+
+\begin{equation} \label{eq:piece-squared-tables_bishops-matrix}
+\begin{pmatrix}
+-20 & -10 & -10 & -10 & -10 & -10 & -10 & -20 \\
+-10 & 0 & 0 & 0 & 0 & 0 & 0 & -10 \\
+-10 & 0 & 5 & 10 & 10 & 5 & 0 & -10 \\
+-10 & 5 & 5 & 10 & 10 & 5 & 5 & -10 \\
+-10 & 0 & 10 & 10 & 10 & 10 & 0 & -10 \\
+-10 & 10 & 10 & 10 & 10 & 10 & 10 & -10 \\
+-10 & 5 & 0 & 0 & 0 & 0 & 5 & -10 \\
+-20 & -10 & -10 & -10 & -10 & -10 & -10 & -20
+\end{pmatrix}
+\end{equation}
+
+\bigskip
+
+\noindent Tomasz Michniewski weißt den Türmen keine stark unterschiedlichen positionsbezogenen Punktwerte zu, wie er dies bei den Springern und Läufern tut.
+Die Türme erhalten lediglich einen Bonus für den siebten Rang und negative Werte für die Außenpositionen A und H [\cite{Wiki2018}] (siehe Formel~\ref{eq:piece-squared-tables_rooks-matrix}).
+
+\begin{equation} \label{eq:piece-squared-tables_rooks-matrix}
+\begin{pmatrix}
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+5 & 10 & 10 & 10 & 10 & 10 & 10 & 5 \\
+-5 & 0 & 0 & 0 & 0 & 0 & 0 & -5 \\
+-5 & 0 & 0 & 0 & 0 & 0 & 0 & -5 \\
+-5 & 0 & 0 & 0 & 0 & 0 & 0 & -5 \\
+-5 & 0 & 0 & 0 & 0 & 0 & 0 & -5 \\
+-5 & 0 & 0 & 0 & 0 & 0 & 0 & -5 \\
+0 & 0 & 0 & 5 & 5 & 0 & 0 & 0
+\end{pmatrix}
+\end{equation}
+
+\bigskip
+
+\noindent Die Erstellung einer Figuren-Quadrat Tabelle für die Dame dient nicht dazu, gute Stellungen zu belohnen, sondern schlechte mit Abzügen zu versehen.
+Dennoch lässt sich aus der von Tomasz Michniewski aufgestellten Darstellung ableiten, dass die Dame in der Mitte des Spielbretts aufhalten sollte [\cite{Wiki2018}] (siehe Formel~\ref{eq:piece-squared-tables_queen-matrix}).
+
+\begin{equation} \label{eq:piece-squared-tables_queen-matrix}
+\begin{pmatrix}
+-20 & -10 & -10 & -5 & -5 & -10 & -10 & -20 \\
+-10 & 0 & 0 & 0 & 0 & 0 & 0 & -10 \\
+-10 & 0 & 5 & 5 & 5 & 5 & 0 & -10 \\
+-5 & 0 & 5 & 5 & 5 & 5 & 0 & -5 \\
+0 & 0 & 5 & 5 & 5 & 5 & 0 & -5 \\
+-10 & 5 & 5 & 5 & 5 & 5 & 0 & -10 \\
+-10 & 0 & 5 & 0 & 0 & 0 & 0 & -10 \\
+-20 & -10 & -10 & -5 & -5 & -10 & -10 & -20
+\end{pmatrix}
+\end{equation}
+
+\bigskip
+
+\noindent Zu guter Letzt werden zwei figurenspezifische Positionstabellen für den König aufgestellt.
+Die erste Tabelle (siehe Formel~\ref{eq:piece-squared-tables_king-matrix-1}) ist für mittlere Phase des Spiels gedacht.
+Hierbei wird deutlich, dass der König zurückgehalten und hinter der Bauernlinie gehalten werden sollte [\cite{Wiki2018}].
+
+\begin{equation} \label{eq:piece-squared-tables_king-matrix-1}
+\begin{pmatrix}
+-30 & -40 & -40 & -50 & -50 & -40 & -40 & -30 \\
+-30 & -40 & -40 & -50 & -50 & -40 & -40 & -30 \\
+-30 & -40 & -40 & -50 & -50 & -40 & -40 & -30 \\
+-30 & -40 & -40 & -50 & -50 & -40 & -40 & -30 \\
+-20 & -30 & -30 & -40 & -40 & -30 & -30 & -20 \\
+-10 & -20 & -20 & -20 & -20 & -20 & -20 & -10 \\
+20 & 20 & 0 & 0 & 0 & 0 & 20 & 20 \\
+20 & 30 & 10 & 0 & 0 & 10 & 30 & 20
+\end{pmatrix}
+\end{equation}
+
+\bigskip
+
+\noindent Für die Endspielphase sieht die Tabelle für den König jedoch anders aus (siehe Formel~\ref{eq:piece-squared-tables_king-matrix-2}).
+Randpositionen schränken den König in seiner Bewegung zusätzlich ein und sind gerade in der Endphase von erhöhtem Risiko, weshalb diese Positionen besonders negativ bewertet sind.
+Demgegenüber sind die zentralen Positionen besonders positiv bewertet [\cite{Wiki2018}].
+
+\begin{equation} \label{eq:piece-squared-tables_king-matrix-2}
+\begin{pmatrix}
+-50 & -40 & -30 & -20 & -20 & -30 & -40 & -50 \\
+-30 & -20 & -10 & 0 & 0 & -10 & -20 & -30 \\
+-30 & -10 & 20 & 30 & 30 & 20 & -10 & -30 \\
+-30 & -10 & 30 & 40 & 40 & 30 & -10 & -30 \\
+-30 & -10 & 30 & 40 & 40 & 30 & -10 & -30 \\
+-30 & -10 & 20 & 30 & 30 & 20 & -10 & -30 \\
+-30 & -30 & 0 & 0 & 0 & 0 & -30 & -30 \\
+-50 & -30 & -30 & -30 & -30 & -30 & -30 & -50
+\end{pmatrix}
+\end{equation}
+
+\bigskip
+
+\noindent Zusätzlich zu den eben beschriebenen figurenspezifischen Positionstabellen beschreibt Tomasz Michniewski, wann die Endphase des Spiel beginnt.
+Diese beginnt nach ihm, wenn eine der beiden folgenden Aussagen zutrifft [\cite{Wiki2018}]:
+
+\begin{enumerate}
+    \item Beide Seiten besitzen keine Dame
+    \item Beide Seiten haben neben der Dame entweder keine weiteren Figuren oder aber maximal eine leichte Figur
+\end{enumerate}

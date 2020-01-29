@@ -1,81 +1,74 @@
 % !TeX root = ../../paper.tex
-\subsection{Mini-Max-Suche}
+\subsection{Alpha-Beta-Suche} \label{ch:alpha-beta-pruning}
 
-Im Schachspiel ist jeder Spieler bestrebt, das für ihn bestmögliche Spielergebnis zu erzielen.
-Zur Abbildung dieses Prinzips dient der \textit{Mini-Max}-Algorithmus [\cite{Paulsen2009}].
-Um dies abbilden zu können wird ein Punktwert eingeführt, den ein Spieler zu maximieren versucht und der andere Spiele zu minimieren versucht.
-Für das Schachspiel und die spätere Betrachtung dessen wird an dieser Stelle festgelegt, dass eine hohe Bewertungen für einen Vorteil der weißen Spielseite steht, wohingegen eine negative Bewertungen für einen Vorteil für die schwarze Spielseite steht.
-Somit ist Weiß bestrebt, den Wert durch die Wahl einer Spieloption zu maximieren und Schwarz den Wert zu minimieren [\cite{Paulsen2009}].
-Zur Berechnung dieses Punktwertes wird ein Spielbaum (engl. \textit{game tree}) benötigt, der alle möglichen Spielzüge beinhaltet.
-Es werden alle Knoten eines Spielbaumes mit ihren zugehörigen Werten generiert [\cite{Shah2007}].
-Die Knoten innerhalb des Baumes werden in drei verschiedene Kategorien unterteilt: Blattknoten, minierende und maximierende Knoten.
-Jeder Blattknoten erhält seinen Nutzwert (engl. \textit{utility value}).
-Den minimierenden Knoten wird jeweils der kleinste Wert ihrer Kindknoten zugewiesen, den maximierenden Knoten jeweils der größte Wert [\cite{Shah2007}].
-Abbildung~\ref{fig:minimax_tic-tac-toe} zeigt einen Teil eines Spielbaums für das Spiel Tic-Tac-Toe, der die einzelnen Schritte der Berechnung durch den Mini-Max-Algorithmus beinhaltet.
+Bedenkzeit ist im Wettbewerbsschach eine begrenzte Ressource.
+Deshalb muss sowohl die Güte eines Schachspielers, als auch die eines Schachcomputers, nicht nur nach der Qualität seiner Züge bewertet werden, sondern auch nach der benötigten Bedenkzeit.
+Durch das exponentielle Wachstum des Spielbaums gerät man beim Minimax Algorithmus, welcher den gesamten Spielbaum analysiert, schnell an rechnerische Grenzen für Computer.
+Eine solche Grenze kann bereits bei einer Tiefe von 10 auftreten, da bei dieser Tiefe schon mehr als 69 Billionen Züge analysiert werden müssen.
+Alpha-Beta Suche wird verwendet, um diesen Prozess zu beschleunigen ohne die Qualität der Analyse zu beeinträchtigen [\cite{Knuth1975}].
+
+Der Ansatz der Alpha-Beta-Suche beruht auf der Tatsache, dass eine vollständige Analyse jedes einzelnen Teilpfads des Spielbaums in den meisten Fällen nicht nötig ist.
+Aus diesem Grund ist es beim Schach möglich, mittels einer Zugvorsortierung bis zu 99\% des Spielbaums vernachlässigen zu können.
+Der Name Alpha-Beta-Suche kommt von den in der Alpha-Beta-Suche verwendeten zwei Variablen Alpha und Beta.
+Alpha speichert während der Analyse der verschiedenen Baumpfade die Evaluation der momentan bestmöglich erreichbaren Position für den maximierenden Spieler (Weiß).
+Analog wird Beta für den minimierenden Spieler (Schwarz) verwendet.
+Somit kann beim Analysieren eines Teilbaums potenziell bereits nach der Evaluierung des ersten Blattknotens bemerkt werden, dass diese Zugfolge weniger vorteilhaft ist, als eine bereits vorher betrachtete und somit die restlichen Zugmöglichkeiten des Teilbaums ignoriert werden.
+Im folgenden Beispiel ist Weiß am Zug und es werden die beiden Zugvarianten Rxb2 und Ka3 des Spielbaums (Abbildung~\ref{fig:alpha-beta_game-tree}) der Tiefe 2 betrachtet.
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.89\textwidth]{images/theory/minimax_tic-tac-toe.png}
-    \caption[Spielbaum eines Tic-Tac-Toe Spiels erstellt mittels des Mini-Max-Algorithmuses]{Spielbaum eines Tic-Tac-Toe Spiels erstellt mittels des Mini-Max-Algorithmuses [\cite{Elnaggar2014}]}
-    \label{fig:minimax_tic-tac-toe}
+    \includegraphics[width=\textwidth]{images/theory/AlphaBetaExample2.png}
+    \caption[Beispielhafter Spielbaum der Tiefe 2 inklusive Evaluation]{Beispielhafter Spielbaum der Tiefe 2 inklusive Evaluation}
+    \label{fig:alpha-beta_game-tree}
 \end{figure}
 
-Die Ausgangssituation des Spiel ist an der Wurzel des Baumes abgebildet.
-Im Falle des Spiels Tic-Tac-Toe wird festgelegt, dass Spieler X bestrebt ist, den Punktwert zu maximieren, wohingegen Spieler O bestrebt ist, diesen zu minimieren.
-Spieler X ist als nächstes am Zug und besitzt drei Möglichkeiten, sein Kreuz auf dem Spielfeld zu platzieren.
-Dem folgt der Spielzug des Spielers O, der seinerseits für jeden möglichen Spielzug von Spieler X je zwei Möglichkeiten besitzt, sein Symbol zu setzen.
-Somit gibt es von der Ausgangslage her sechs mögliche Spielzüge, die Spieler O durchführen kann.
-Zu guter Letzt hat Spieler X für jede seiner Ausgangslagen nur noch eine Möglichkeit, sein Kreuz zu setzen.
-Jeder mögliche Endstand des Spiels erhält nun einen Punktwert.
-Markiert der Endstand einen Sieg für Spieler X, so erhält dieser den Wert 1, bei einem Sieg für Spieler O den Wert -1 und bei einem Unendschieden den Wert 0.
-Die Werte der Blattknoten werden anschließend nach oben propagiert.
-Maximierende Knoten (Spieler X ist am Zug) übernehmen den jeweils höchsten Zahlenwert, minimierende Knoten (Spieler O ist am Zug) den niedrigsten Wert.
-Am Ende dieses Prozesses ist von der Ausgangslage des Spiels erkennbar, dass Spieler X dem rechten Pfad des Baumes folgen muss, um garantiert einen Sieg zu erzielen, es für ihn aber auch bei einer Fehlentscheidung im nächsten Zug noch möglich ist, das Spiel zu gewinnen.
-Beim Schach ist es jedoch in der Regel nicht möglich alle Positionen bis zum Spielende zu analysieren.
-Im Gegenteil zu Tic-Tac-Toe, bei dem der Spielbaum maximal die Tiefe neun erreicht, kann beim Schach theoretisch eine Tiefe von 5899 erreicht werden.
-Da es im Verlauf eines Schachspiels durchschnittlich $x$ mögliche Züge für den Spieler am Zug gibt, gibt es ab einer bestimmten Tiefe $t$, $x^t$ zu analysierenden Positionen.
-Weil sogar schnelle Computer bei diesem exponentiell wachsenden Baum zu hohe Rechenzeiten benötigen, muss eine maximale Tiefe, bis zu der der Spielbaum analysiert wird, festgelegt werden.
-Diese ist je nach Anspruch bei präzisen Evaluationen tiefer, bei schnellen Evaluationen weniger tief.
-Um den Minimax Algorithmus auf Programmierebene umzusetzen, werden folgende Methoden benötigt [\cite{Shannon1950}]:
+Die Ausgangssituation sieht wie folgt aus:
 
-\begin{itemize}
-    \item Sammelt für eine Position die erlaubten Züge. Hierfür muss sowohl auf verschiedenen Zugarten der Figuren und Schach eingegangen werden, als auch Sonderzüge wie En-Passant und die Rochade berücksichtigt werden.
-    \item Die Kernaufgabe des Minimax Algorithmus umsetzt, also das abwechselnde Maximieren und Minimieren der möglichen Folgezüge einer Position.
-    \item Die statische Eval-Function aus Kapitel 2.1 umsetzt.
-    \item Kann für eine Position Schachzüge ausführen und diese auch rückgängig machen
-\end{itemize}
+\newgame
+\def\AlphaBetaStart{kh8, pb2, Ra2, Ka4}
+\def\AlphaBetaRxb{kh8, Rb2, Ka4}
+\def\AlphaBetaKa{kh8, Ra2, Ka3,qb1}
+\setchessboard{setpieces=\AlphaBetaStart}
+\begin{center}
+    {\chessboard[largeboard]}
+\end{center}
 
-Bei der Umsetzung der Kernaufgabe des Minimax-Algorithmus wird der Ansatz von [\cite{Knuth1975}] übernommen.
-Außerdem wird die Standard-Implementierung verwendet, bei der der gesamte Algorithmus in zwei Prozeduren, Minimize und  Maximize, aufgeteilt wird.
-Diese führen dabei jene Tätigkeiten aus, welche die Entscheidungen des minimierenden bzw. maximierenden Spielers repräsentieren.
-Bei der alternativen Negamax-Implementierung gibt es nur eine Minimax-Prozedur welche die Funktionen beider Spieler übernimmt.
-Um die Standard-Im\-ple\-men\-tie\-rung umzusetzten, werden Funktionen $F$ (Gleichung~\ref{eq:minimax_white-players-function}) für den Spieler Weiß und $G$ (Gleichung~\ref{eq:minimax_black-players-function}) für Spieler Schwarz definiert. Die beiden Funktionen definieren das Verhalten der Spieler beim Treffen auf eine Schachposition $p$ in der Tiefe $t$.
+Zunächst wird der Zug Rxb2 analysiert, auf den Schwarz mit drei Zügen reagieren kann (Kg8, Kg7 oder Kh7).
+Nun sind wir in der maximalen Tiefe angekommen und deshalb werden Kg8, Kg7 und Kh7 der Reihe nach statisch evaluiert.
+Dies führt jeweils zu einem Wert von +5, denn Weiß hat in allen drei Variationen einen extra Turm.
 
-\begin{equation} \label{eq:minimax_white-players-function}
-    F(p,t) =
-    \begin{cases}
-        e(p) \quad \text{if }t=0,\\
-        max(G(p1, t-1), G(p2, t-1), ... , G(pl, t-1)) \quad \text{if } t > 0
-    \end{cases}
-\end{equation}
+\setchessboard{setpieces=\AlphaBetaRxb, mover=b}
+\begin{center}
+    \chessboard[largeboard,pgfstyle=straightmove, markmove={h8-g8,h8-g7,h8-h7}]
+\end{center}
 
-\begin{equation} \label{eq:minimax_black-players-function}
-    G(p,t) =
-    \begin{cases}
-        e(p) \quad \text{if }t=0,\\
-        min(F(p1, t-1), F(p2, t-1), ... , F(pl, t-1)) \quad \text{if } t > 0
-    \end{cases}
-\end{equation}
+Jetzt kann man Alpha mit einem Wert von +5 belegen, denn falls Weiß möchte, kann es den Zug Rxb2 spielen und sich eine Evaluation von +5 garantieren.
 
-Dabei sind $p1$, ... , $pl$ die möglichen Positionen, welche nach einem Zug aus der Position p resultieren können und $e(p)$ die Bewertungsfunktion ist.
-Es kann, anders als bei der Negamax-Implementierung, dieselbe Bewertungsfunktion für beide Funktionen benutzt werden, weil diese weiß-favorisierende Positionen mit positiven Werten- und schwarz-favorisierende Positionen mit negativen Werten bewertet.
-Der Pseudocode für einen Minimax ist in Algorithmus~\ref{alg:minimax_minimax} dargestellt.
+Anschließend wird der zweite Zug Ka3 analysiert.
+Schwarz hat sieben Möglichkeiten auf Ka3 zu antworten (b1Q, b1R, b1N, b1B, Kg7, Kh7, Kg8).
+Da wir wieder die Tiefe zwei erreicht haben, werden die Züge statisch evaluiert.
+Die Analyse des ersten Zugs b1Q führt zu einer Evaluation von -4, denn Schwarz hat nun eine Dame für weiß' Turm (im Graph mit grünem Pfeil gekennzeichnet).
 
-\begin{algorithm}[H]
-    \caption{Minimax}
-    \label{alg:minimax_minimax}
+\setchessboard{setpieces=\AlphaBetaKa, mover=w}
+\begin{center}
+    \chessboard[largeboard,pgfstyle=straightmove, markmove={b2-b1}]
+\end{center}
+
+Aus dieser Erkenntnis können wir schließen, dass aus Ka8 höchstens eine Position mit der Evaluation von -4 resultiert, da Schwarz der minimierende Spieler ist.
+Alpha, die Evaluation die der maximierende Spieler Weiß auf jeden Fall erreich kann, beträgt jedoch bereits +5.
+Deshalb steht fest, dass Weiß Ka3 nicht spielen wird und die restlichen sechs möglichen Züge von Schwarz brauchen auch nicht mehr evaluiert zu werden (im Graph mit roten Pfeilen gekennzeichnet).
+
+Ähnlich wie in diesem Beispiel, würde auch ein menschlicher Spieler in dem meisten Situationen wohl kaum Zeit dafür verwenden, einen Zug zu analysieren, der dem Gegner eine extra Dame ermöglicht [\cite{Paulsen2009}].
+
+Um die Alpha-Beta-Suche zu implementieren, wird eine weitere Methode benötigt, die nach der Erkenntnis, dass sich das Fortsetzen der Analyse des Teilbaums nicht weiter lohnt, den Algorithmus für diesen Teilbaum stoppt.
+Hierfür wird der Pseudocode aus dem Kapitel Minimax mit den beiden beschriebenen Variablen Alpha und Beta erweitert.
+Diese werden zu Beginn mit den jeweils schlechtmöglichsten Werten für Weiß und Schwarz belegt ($-\infty$ und $\infty$) und den Prozeduren Minimize (Algorithmus~\ref{alg:alpha-beta_minimize}) und Maximize (Algorithmus~\ref{alg:alpha-beta_maximize}), wie die Tiefe, als Argument übergeben.
+
+\begin{algorithm}
+    \caption{MAXIMIZE Funktion}
+    \label{alg:alpha-beta_maximize}
     \begin{algorithmic}[1]
-        \Function{maximize}{Integer $d$, Position $p$}
+        \Function{maximize}{Integer $d$, Position $p$, Float $alpha$, Float $beta$}
         \If{$d < 1$}
         \State \Return evaluate($p$)
         \Else
@@ -83,16 +76,26 @@ Der Pseudocode für einen Minimax ist in Algorithmus~\ref{alg:minimax_minimax} d
         \State $legalMoves \gets findLegalMoves(p)$
         \ForAll {$m$ in $legalMoves$}
         \State p.move(m)
-        \State $moveScore \gets minimize(d-1, p)$
+        \State $moveScore \gets minimize(d-1, p, alpha, beta)$
         \State p.undoMove(m)
         \If{$moveScore > score$}
         \State $score \gets moveScore$
+        \EndIf
+        \If{$score >= beta$}
+        \State break
         \EndIf
         \EndFor
         \EndIf
         \State \Return $score$
         \EndFunction
-        \Function{minimize}{Integer $d$, Position $p$}
+    \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+    \caption{MINIMIZE Funktion}
+    \label{alg:alpha-beta_minimize}
+    \begin{algorithmic}[1]
+        \Function{minimize}{Integer $d$, Position $p$, Float $alpha$, Float $beta$}
         \If{$d < 1$}
         \State \Return evaluate($p$)
         \Else
@@ -100,10 +103,13 @@ Der Pseudocode für einen Minimax ist in Algorithmus~\ref{alg:minimax_minimax} d
         \State $legalMoves \gets findLegalMoves(p)$
         \ForAll {$m$ in $legalMoves$}
         \State p.move(m)
-        \State $moveScore \gets maximize(d-1, p)$
+        \State $moveScore \gets maximize(d-1, p, alpha, beta)$
         \State p.undoMove(m)
         \If{$moveScore < score$}
         \State $score \gets moveScore$
+        \EndIf
+        \If{$score <= alpha$}
+        \State break
         \EndIf
         \EndFor
         \EndIf
