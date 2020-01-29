@@ -1,284 +1,114 @@
 % !TeX root = ../../paper.tex
-\subsection{Bewertungsfunktion}
+\subsection{Mini-Max-Suche}
 
-In der Spieltheorie im Allgemeinen und im Schach im Besonderen ist es in der Regel nicht möglich, alle möglichen Zugfolgen aus einer Spielposition heraus bis zum Ende zu verfolgen.
-Deshalb \glqq [...] wird eine Funktion benötigt, die die Stellung auf dem Spielbrett danach bewertet,
-ob sie für eine der beiden Parteien vorteilhaft oder nachteilig ist.\grqq \ [\cite{Paulsen2009}]
-Diese Funktion wird als \textit{Bewertungsfunktion} bezeichnet.
-Die Bewertungsfunktion setzt sich aus einem materiellen und einer positionellen Komponente zusammen.
-Bei der materiellen Komponente werden zunächst die vorhandenen weißen Figuren nach Stärke bewertet und aufsummiert.
-Anschließend werden die schwarzen Figuren nach Stärke bewertet, aufsummiert und vom Gesamtwert der weißen Figuren subtrahiert.
-Daraus lassen sich erste Schlussfolgerungen über den Spielstand ziehen.
-Zudem ist es möglich, die derzeitige Spielphase abzuleiten [\cite{Paulsen2009}].
+Im Schachspiel ist jeder Spieler bestrebt, das für ihn bestmögliche Spielergebnis zu erzielen.
+Zur Abbildung dieses Prinzips dient der \textit{Mini-Max}-Algorithmus [\cite{Paulsen2009}].
+Um dies abbilden zu können wird ein Punktwert eingeführt, den ein Spieler zu maximieren versucht und der andere Spiele zu minimieren versucht.
+Für das Schachspiel und die spätere Betrachtung dessen wird an dieser Stelle festgelegt, dass eine hohe Bewertungen für einen Vorteil der weißen Spielseite steht, wohingegen eine negative Bewertungen für einen Vorteil für die schwarze Spielseite steht.
+Somit ist Weiß bestrebt, den Wert durch die Wahl einer Spieloption zu maximieren und Schwarz den Wert zu minimieren [\cite{Paulsen2009}].
+Zur Berechnung dieses Punktwertes wird ein Spielbaum (engl. \textit{game tree}) benötigt, der alle möglichen Spielzüge beinhaltet.
+Es werden alle Knoten eines Spielbaumes mit ihren zugehörigen Werten generiert [\cite{Shah2007}].
+Die Knoten innerhalb des Baumes werden in drei verschiedene Kategorien unterteilt: Blattknoten, minierende und maximierende Knoten.
+Jeder Blattknoten erhält seinen Nutzwert (engl. \textit{utility value}).
+Den minimierenden Knoten wird jeweils der kleinste Wert ihrer Kindknoten zugewiesen, den maximierenden Knoten jeweils der größte Wert [\cite{Shah2007}].
+Abbildung~\ref{fig:minimax_tic-tac-toe} zeigt einen Teil eines Spielbaums für das Spiel Tic-Tac-Toe, der die einzelnen Schritte der Berechnung durch den Mini-Max-Algorithmus beinhaltet.
 
-Da es beim Schach aber auch entscheidend ist, auf welchen Feldern sich die einzelnen Figuren befinden und in welcher Position sie zueinander stehen (Bauernstruktur, Königssicherheit), wird zusätzlich zur materiellen Komponente eine positionelle Komponente berechnet.
-Die verschiedenen Positionen werden aus der Spielbrettaufstellung entnommen und fließen mit ihren jeweiligen Gewichtungen in die anschließende Bewertung ein [\cite{Paulsen2009}].
-
-
-\subsubsection{Einfache Bewertungsfunktion} \label{ch:simple-eval-function}
-
-Das Schachspiel setzt sich aus zwei wichtigen Faktoren zusammen: Einerseits ist abgesehen von der Tatsache, welcher Spieler den ersten Zug macht, keine Zufallskomponete enthalten, andererseits handelt es sich um ein Spiel mit \gls{PI}.
-Diese zwei Faktoren führen dazu, dass bei jeder Schachbrettposition eine der folgenden drei Aussagen gilt [\cite{Shannon1950}]:
-
-\begin{enumerate}
-    \item Es handelt sich um eine gewonnene Position für Weiß. Somit kann Weiß einen Sieg forcieren, wobei Schwarz verteidigt.
-    \item Es handelt sich um eine gewonnene Position für Schwarz. Somit kann Schwarz einen Sieg forcieren, wobei Weiß spielt.
-    \item Es handelt sich um eine ausgeglichene Position für beide Parteien. Somit kann es nur ein Unentschieden am Ende geben, falls beide Parteien keine Fehler machen.
-\end{enumerate}
-
-\noindent Bei einigen Spielen (so auch beim Schach) lässt sich aus den genannten zwei Faktoren und den daraus resultierenden drei Aussagen eine \textit{einfache Bewertungsfunktion} \(\displaystyle f(P)\) ableiten, wobei \(\displaystyle P\) die Schachbrettposition bezeichnet.
-Der Rückgabewert der Funktion ist die Kategorie, in die die jeweilige Position gehört: Sieg (+1), Unentschieden (0), Niederlage (-1).
-Zum Zeitpunkt des Zuges des Schachcomputers werden die Werte \(\displaystyle f(P)\) für alle Positionen nach möglichen Halbzügen berechnet.
-Der Zug mit dem maximalen Wert wird am Ende ausgeführt [\cite{Shannon1950}].
-
-Im Zuge dieser Arbeit wird die einfache Bewertungsfunktion nach Tomasz Michniewski verwendet, die ursprünglich in der \textit{Polish chess programming discussion list (progszach)} veröffentlicht wurde und im chessprogramming.org Wiki beschrieben wird.
-Die Gewichtungen der Bewertungsfunktion wurden so gewählt, dass ein Mangel an Schachkenntnissen ausgeglichen werden kann und nicht, um durch Schachkenntnisse ergänzt zu werden.
-Da die Gewichtungen von Tomasz Michniewski und nicht von den Autoren dieser Arbeit festgelegt wurden, erfolgt an dieser Stelle keine Erläuterung zur Entstehung der Gewichtungswerte [\cite{Wiki2018}]. Die von Tomasz Michniewski beschriebene einfache Bewertungsfunktion wird in zwei Teilen dargestellt: Einfache Figurenwerte (engl. \textit{simple piece values}) und Figuren-Quadrat Tabellen (engl. \textit{piece-square tables}).
-
-Mit der Festlegung von Werten je Figur werden vier verschiedene Ziele erreicht:
-
-\begin{enumerate}
-    \item Vermeidung des Austauschs einer kleinen Figur gegen drei Bauern
-    \item Dem Computer signalisieren, dass das halten des Läuferpaars vorteilhaft ist
-    \item Vermeidung des Austauschs von zwei kleinen Figuren gegen einen Turm und einen Bauern
-    \item Verbleiben bei der menschlichen Schacherfahrung
-\end{enumerate}
-
-\noindent Der erste Punkt wird durch Gleichung~\ref{eq:piece-values_first-result} erfüllt.
-
-\begin{equation} \label{eq:piece-values_first-result}
-\begin{split}
-    L > 3B \\
-    S > 3B
-\end{split}
-\end{equation}
-
-\noindent Zwar gibt es durchaus Positionen, in denen drei Bauern wertvoller als eine kleine Figur sind, jedoch ist es im Allgemeinen besser eine kleine Figur zu behalten, da im Spielverlauf die Bauern individuell attackiert werden können und deren Wert als Dreier-Figuren-Gespann verloren geht [\cite{Wiki2018}].
-Der zweite genannte Punkt wird durch Gleichung~\ref{eq:piece-values_second-result} erreicht.
-
-\begin{equation} \label{eq:piece-values_second-result}
-    L > S
-\end{equation}
-
-\noindent Zwar garantiert diese Gleichung kein Halten des Läuferpaars, da am Ende ein Läufer gegen einen Springer stehen kann, dennoch ist es eine Tatsache, dass Spieler oftmals Springer mit Läufern schlagen und nicht Läufer mit Springern [\cite{Wiki2018}].
-Die ersten beiden Gleichungen~\ref{eq:piece-values_first-result} und~\ref{eq:piece-values_second-result} führen zusammen zu Gleichung~\ref{eq:piece-values_first-and-second-result-combined}.
-
-\begin{equation} \label{eq:piece-values_first-and-second-result-combined}
-    L > S > 3B
-\end{equation}
-
-\noindent Der dritte Punkt wird zwar durch Gleichung~\ref{eq:piece-values_third-result} erreicht, dennoch haben Spiele wie jenes zwischen Karpov und Kasparov gezeigt, dass bereits ein Turm und zwei Bauern ausreichen, um gegen zwei kleine Figuren gewinnen zu können.
-
-\begin{equation} \label{eq:piece-values_third-result}
-    L + S > T + B
-\end{equation}
-
-\noindent Aus diesem Grund wird die Gleichung~\ref{eq:piece-values_third-result}, die ferner als Gleichung~\ref{eq:piece-values_third-result-full} dargestellt werden kann, um einen Faktor erweitert, woraus sich Gleichung~\ref{eq:piece-values_third-result-enhanced} ergibt [\cite{Wiki2018}].
-
-\begin{equation} \label{eq:piece-values_third-result-full}
-    T + 2B > L + S > T + B
-\end{equation}
-
-\begin{equation} \label{eq:piece-values_third-result-enhanced}
-    L + S > T + 1.5B
-\end{equation}
-
-\noindent Durch die hier beschriebenen Gleichungen ist der vierte Punkt implizit erfüllt.
-Zu guter Letzt wird noch eine Gleichung benötigt, die das Verhältnis einer Dame-Bauer-Kombination gegenüber zwei Türmen darstellt.
-Dies ist in Gleichung~\ref{eq:piece-values_final-result-missing} abgebildet.
-
-\begin{equation} \label{eq:piece-values_final-result-missing}
-    Q + B = 2T
-\end{equation}
-
-\noindent Somit erhält man das Gleichungssystem, das in Gleichung~\ref{eq:piece-values_final-result} dargestellt ist.
-
-\begin{equation} \label{eq:piece-values_final-result}
-\begin{split}
-    L > S > 3B \\
-    L + S = T + 1.5B \\
-    Q + B = 2T
-\end{split}
-\end{equation}
-
-\noindent Dieses Gleichungssystem wird durch die in Tabelle~\ref{tb:piece-values_satified} gelisteten Werte erfüllt.
-Diese Werte wurden von Tomasz Michniewski festgelegt mit Ausnahme des Wertes des Königs.
-Dieser Wert stammt aus dem Paper von Claude Shannon, wobei dieser an der Stelle dem König den Wert 200 gibt, was durch die Umrechnung in Hundertstelbauer zu 20000 führt [\cite{Shannon1950}].
-Der Wert für den König ist bewusst so hoch gewählt worden, da der Verlust des Königs automatisch zur Niederlage führt.
-Daraus folgt zudem, dass der Verlust des Königs durch die materielle Komponente der Bewertungsfunktion einfacher erkannt werden kann.
-Zu guter Letzt sei angemerkt, dass die Wahl der Figurenwerte dazu führt, dass diese in einer 2~Byte vorzeichenbehafteten Ganzzahl abgelegt werden können, da der Gesamtwert aller Spielfiguren einer Seite rund 30300 beträgt [\cite{Wiki2018}].
-
-\begin{table}
+\begin{figure}
     \centering
-    \begin{tabular}{| L{0.47\textwidth} | R{0.47\textwidth} |}
-        \hline
-        \thead{Figur} & \thead{Wert} \\
-        \hline
-        Bauer & 100 \\
-        \hline
-        Springer & 320 \\
-        \hline
-        Läufer & 330 \\
-        \hline
-        Turm & 500 \\
-        \hline
-        Dame & 900 \\
-        \hline
-        König & 20000 \\
-        \hline
-    \end{tabular}
-    \caption[Figurenwerte in Hundertstelbauer]{Figurenwerte in Hundertstelbauer [\cite{Wiki2018}]}
-    \label{tb:piece-values_satified}
-\end{table}
+    \includegraphics[width=0.89\textwidth]{images/theory/minimax_tic-tac-toe.png}
+    \caption[Spielbaum eines Tic-Tac-Toe Spiels erstellt mittels des Mini-Max-Algorithmuses]{Spielbaum eines Tic-Tac-Toe Spiels erstellt mittels des Mini-Max-Algorithmuses [\cite{Elnaggar2014}]}
+    \label{fig:minimax_tic-tac-toe}
+\end{figure}
 
-Nachdem die Figurenwerte ausführlich dargelegt wurden, werden nun Figuren-Quadrat Tabellen erstellt.
-Diese haben die Aufgabe für gut positionierte Figuren eine \textit{Belohnung} und für schlecht positionierte Figuren \textit{Abzüge} zu erteilen [\cite{Wiki2018}].
+Die Ausgangssituation des Spiel ist an der Wurzel des Baumes abgebildet.
+Im Falle des Spiels Tic-Tac-Toe wird festgelegt, dass Spieler X bestrebt ist, den Punktwert zu maximieren, wohingegen Spieler O bestrebt ist, diesen zu minimieren.
+Spieler X ist als nächstes am Zug und besitzt drei Möglichkeiten, sein Kreuz auf dem Spielfeld zu platzieren.
+Dem folgt der Spielzug des Spielers O, der seinerseits für jeden möglichen Spielzug von Spieler X je zwei Möglichkeiten besitzt, sein Symbol zu setzen.
+Somit gibt es von der Ausgangslage her sechs mögliche Spielzüge, die Spieler O durchführen kann.
+Zu guter Letzt hat Spieler X für jede seiner Ausgangslagen nur noch eine Möglichkeit, sein Kreuz zu setzen.
+Jeder mögliche Endstand des Spiels erhält nun einen Punktwert.
+Markiert der Endstand einen Sieg für Spieler X, so erhält dieser den Wert 1, bei einem Sieg für Spieler O den Wert -1 und bei einem Unendschieden den Wert 0.
+Die Werte der Blattknoten werden anschließend nach oben propagiert.
+Maximierende Knoten (Spieler X ist am Zug) übernehmen den jeweils höchsten Zahlenwert, minimierende Knoten (Spieler O ist am Zug) den niedrigsten Wert.
+Am Ende dieses Prozesses ist von der Ausgangslage des Spiels erkennbar, dass Spieler X dem rechten Pfad des Baumes folgen muss, um garantiert einen Sieg zu erzielen, es für ihn aber auch bei einer Fehlentscheidung im nächsten Zug noch möglich ist, das Spiel zu gewinnen.
+Beim Schach ist es jedoch in der Regel nicht möglich alle Positionen bis zum Spielende zu analysieren.
+Im Gegenteil zu Tic-Tac-Toe, bei dem der Spielbaum maximal die Tiefe neun erreicht, kann beim Schach theoretisch eine Tiefe von 5899 erreicht werden.
+Da es im Verlauf eines Schachspiels durchschnittlich $x$ mögliche Züge für den Spieler am Zug gibt, gibt es ab einer bestimmten Tiefe $t$, $x^t$ zu analysierenden Positionen.
+Weil sogar schnelle Computer bei diesem exponentiell wachsenden Baum zu hohe Rechenzeiten benötigen, muss eine maximale Tiefe, bis zu der der Spielbaum analysiert wird, festgelegt werden.
+Diese ist je nach Anspruch bei präzisen Evaluationen tiefer, bei schnellen Evaluationen weniger tief.
+Um den Minimax Algorithmus auf Programmierebene umzusetzen, werden folgende Methoden benötigt [\cite{Shannon1950}]:
 
-Für die Bauern gilt, dass deren Vorwärtsbewegung prinzipiell belohnt wird.
-Des Weiteren werden die zentralen Bauern (D2, E2) negativ bewertet, sollten sie sich nicht bewegen.
-Das rührt daher, da Bauern direkt vor dem König-Dame-Paar als hindernd angesehen werden, weil es im Besonderen den Bewegungsfreiraum der beiden Läufer zu Beginn des Spiels einschränkt.[\cite{Wiki2018}].
-Gleichung~\ref{eq:piece-squared-tables_pawns-matrix} zeigt mittels einer Matrix die positionsbezogenen Werte für Bauern auf dem Spielbrett.
+\begin{itemize}
+    \item Sammelt für eine Position die erlaubten Züge. Hierfür muss sowohl auf verschiedenen Zugarten der Figuren und Schach eingegangen werden, als auch Sonderzüge wie En-Passant und die Rochade berücksichtigt werden.
+    \item Die Kernaufgabe des Minimax Algorithmus umsetzt, also das abwechselnde Maximieren und Minimieren der möglichen Folgezüge einer Position.
+    \item Die statische Eval-Function aus Kapitel 2.1 umsetzt.
+    \item Kann für eine Position Schachzüge ausführen und diese auch rückgängig machen
+\end{itemize}
 
-\begin{equation} \label{eq:piece-squared-tables_pawns-matrix}
-\begin{pmatrix}
-0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-50 & 50 & 50 & 50 & 50 & 50 & 50 & 50 \\
-10 & 10 & 20 & 30 & 30 & 20 & 10 & 10 \\
-5 & 5 & 10 & 25 & 25 & 10 & 5 & 5 \\
-0 & 0 & 0 & 20 & 20 & 0 & 0 & 0 \\
-5 & -5 & -10 & 0 & 0 & -10 & -5 & 5 \\
-5 & 10 & 10 & -20 & -20 & 10 & 10 & 5 \\
-0 & 0 & 0 & 0 & 0 & 0 & 0 & 0
-\end{pmatrix}
+Bei der Umsetzung der Kernaufgabe des Minimax-Algorithmus wird der Ansatz von [\cite{Knuth1975}] übernommen.
+Außerdem wird die Standard-Implementierung verwendet, bei der der gesamte Algorithmus in zwei Prozeduren, Minimize und  Maximize, aufgeteilt wird.
+Diese führen dabei jene Tätigkeiten aus, welche die Entscheidungen des minimierenden bzw. maximierenden Spielers repräsentieren.
+Bei der alternativen Negamax-Implementierung gibt es nur eine Minimax-Prozedur welche die Funktionen beider Spieler übernimmt.
+Um die Standard-Im\-ple\-men\-tie\-rung umzusetzten, werden Funktionen $F$ (Gleichung~\ref{eq:minimax_white-players-function}) für den Spieler Weiß und $G$ (Gleichung~\ref{eq:minimax_black-players-function}) für Spieler Schwarz definiert. Die beiden Funktionen definieren das Verhalten der Spieler beim Treffen auf eine Schachposition $p$ in der Tiefe $t$.
+
+\begin{equation} \label{eq:minimax_white-players-function}
+    F(p,t) =
+    \begin{cases}
+        e(p) \quad \text{if }t=0,\\
+        max(G(p1, t-1), G(p2, t-1), ... , G(pl, t-1)) \quad \text{if } t > 0
+    \end{cases}
 \end{equation}
 
-\bigskip
-
-\noindent Eine genauere Erläuterung zu den einzelnen Werten pro Spielposition der Bauern kann bei [\cite{Wiki2018}] nachgelesen werden.
-
-Springer sind aufgrund ihrer Bewegungsart am effektivsten in der Mitte des Spielfeldes, weshalb sie auf den mittleren Positionen höhere Punktwerte erhalten.
-Demgegenüber erhalten sie negative Punktwerte für Randpositionen, da diese ihren Bewegungsradius einschränken [\cite{Wiki2018}].
-Gleichung~\ref{eq:piece-squared-tables_knights-matrix} zeigt die entsprechenden Werte für die Springerpositionen.
-
-\begin{equation} \label{eq:piece-squared-tables_knights-matrix}
-\begin{pmatrix}
--50 & -40 & -30 & -30 & -30 & -30 & -40 & -50 \\
--40 & -20 & 0 & 0 & 0 & 0 & -20 & -40 \\
--30 & 0 & 10 & 15 & 15 & 10 & 0 & -30 \\
--30 & 5 & 15 & 20 & 20 & 15 & 5 & -30 \\
--30 & 0 & 15 & 20 & 20 & 15 & 0 & -30 \\
--30 & 5 & 10 & 15 & 15 & 10 & 5 & -30 \\
--40 & -20 & 0 & 5 & 5 & 0 & -20 & -40 \\
--50 & -40 & -30 & -30 & -30 & -30 & -40 & -50
-\end{pmatrix}
+\begin{equation} \label{eq:minimax_black-players-function}
+    G(p,t) =
+    \begin{cases}
+        e(p) \quad \text{if }t=0,\\
+        min(F(p1, t-1), F(p2, t-1), ... , F(pl, t-1)) \quad \text{if } t > 0
+    \end{cases}
 \end{equation}
 
-\bigskip
+Dabei sind $p1$, ... , $pl$ die möglichen Positionen, welche nach einem Zug aus der Position p resultieren können und $e(p)$ die Bewertungsfunktion ist.
+Es kann, anders als bei der Negamax-Implementierung, dieselbe Bewertungsfunktion für beide Funktionen benutzt werden, weil diese weiß-favorisierende Positionen mit positiven Werten- und schwarz-favorisierende Positionen mit negativen Werten bewertet.
+Der Pseudocode für einen Minimax ist in Algorithmus~\ref{alg:minimax_minimax} dargestellt.
 
-\noindent Läufer erhalten zusätzliche Punkte für zentrale Positionen, da sie dort, ähnlich wie Springer, den größten Bewegungsradius besitzen.
-Des Weiteren erhalten sie für Randpositionen Abzüge, wobei die Positionen in den Ecken des Spielbretts besonders negativ bewertet sind [\cite{Wiki2018}].
-Eine positionsbezogene Punktwerteaufstellung mittels einer Matrix ist in Gleichung~\ref{eq:piece-squared-tables_bishops-matrix} abgebildet.
-
-\begin{equation} \label{eq:piece-squared-tables_bishops-matrix}
-\begin{pmatrix}
--20 & -10 & -10 & -10 & -10 & -10 & -10 & -20 \\
--10 & 0 & 0 & 0 & 0 & 0 & 0 & -10 \\
--10 & 0 & 5 & 10 & 10 & 5 & 0 & -10 \\
--10 & 5 & 5 & 10 & 10 & 5 & 5 & -10 \\
--10 & 0 & 10 & 10 & 10 & 10 & 0 & -10 \\
--10 & 10 & 10 & 10 & 10 & 10 & 10 & -10 \\
--10 & 5 & 0 & 0 & 0 & 0 & 5 & -10 \\
--20 & -10 & -10 & -10 & -10 & -10 & -10 & -20
-\end{pmatrix}
-\end{equation}
-
-\bigskip
-
-\noindent Tomasz Michniewski weißt den Türmen keine stark unterschiedlichen positionsbezogenen Punktwerte zu, wie er dies bei den Springern und Läufern tut.
-Die Türme erhalten lediglich einen Bonus für den siebten Rang und negative Werte für die Außenpositionen A und H [\cite{Wiki2018}] (siehe Gleichung~\ref{eq:piece-squared-tables_rooks-matrix}).
-
-\begin{equation} \label{eq:piece-squared-tables_rooks-matrix}
-\begin{pmatrix}
-0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-5 & 10 & 10 & 10 & 10 & 10 & 10 & 5 \\
--5 & 0 & 0 & 0 & 0 & 0 & 0 & -5 \\
--5 & 0 & 0 & 0 & 0 & 0 & 0 & -5 \\
--5 & 0 & 0 & 0 & 0 & 0 & 0 & -5 \\
--5 & 0 & 0 & 0 & 0 & 0 & 0 & -5 \\
--5 & 0 & 0 & 0 & 0 & 0 & 0 & -5 \\
-0 & 0 & 0 & 5 & 5 & 0 & 0 & 0
-\end{pmatrix}
-\end{equation}
-
-\bigskip
-
-\noindent Die Erstellung einer Figuren-Quadrat Tabelle für die Königin dient nicht dazu, gute Stellungen zu belohnen, sondern schlechte mit Abzügen zu versehen.
-Dennoch lässt sich aus der von Tomasz Michniewski aufgestellten Darstellung ableiten, dass die Königin in der Mitte des Spielbretts aufhalten sollte [\cite{Wiki2018}] (siehe Gleichung~\ref{eq:piece-squared-tables_queen-matrix}).
-
-\begin{equation} \label{eq:piece-squared-tables_queen-matrix}
-\begin{pmatrix}
--20 & -10 & -10 & -5 & -5 & -10 & -10 & -20 \\
--10 & 0 & 0 & 0 & 0 & 0 & 0 & -10 \\
--10 & 0 & 5 & 5 & 5 & 5 & 0 & -10 \\
--5 & 0 & 5 & 5 & 5 & 5 & 0 & -5 \\
-0 & 0 & 5 & 5 & 5 & 5 & 0 & -5 \\
--10 & 5 & 5 & 5 & 5 & 5 & 0 & -10 \\
--10 & 0 & 5 & 0 & 0 & 0 & 0 & -10 \\
--20 & -10 & -10 & -5 & -5 & -10 & -10 & -20
-\end{pmatrix}
-\end{equation}
-
-\bigskip
-
-\noindent Zu guter Letzt werden zwei Figuren-Quadrat Tabellen für den König aufgestellt.
-Die erste Tabelle (siehe Gleichung~\ref{eq:piece-squared-tables_king-matrix-1}) ist für mittlere Phase des Spiels gedacht.
-Hierbei wird deutlich, dass der König zurückgehalten und hinter der Bauernlinie gehalten werden sollte [\cite{Wiki2018}].
-
-\begin{equation} \label{eq:piece-squared-tables_king-matrix-1}
-\begin{pmatrix}
--30 & -40 & -40 & -50 & -50 & -40 & -40 & -30 \\
--30 & -40 & -40 & -50 & -50 & -40 & -40 & -30 \\
--30 & -40 & -40 & -50 & -50 & -40 & -40 & -30 \\
--30 & -40 & -40 & -50 & -50 & -40 & -40 & -30 \\
--20 & -30 & -30 & -40 & -40 & -30 & -30 & -20 \\
--10 & -20 & -20 & -20 & -20 & -20 & -20 & -10 \\
-20 & 20 & 0 & 0 & 0 & 0 & 20 & 20 \\
-20 & 30 & 10 & 0 & 0 & 10 & 30 & 20
-\end{pmatrix}
-\end{equation}
-
-\bigskip
-
-\noindent Für die Endspielphase sieht die Tabelle für den König jedoch anders aus (siehe Gleichung~\ref{eq:piece-squared-tables_king-matrix-2}).
-Randpositionen schränken den König in seiner Bewegung zusätzlich ein und sind gerade in der Endphase von erhöhtem Risiko, weshalb diese Positionen besonders negativ bewertet sind.
-Demgegenüber sind die zentralen Positionen besonders positiv bewertet [\cite{Wiki2018}].
-
-\begin{equation} \label{eq:piece-squared-tables_king-matrix-2}
-\begin{pmatrix}
--50 & -40 & -30 & -20 & -20 & -30 & -40 & -50 \\
--30 & -20 & -10 & 0 & 0 & -10 & -20 & -30 \\
--30 & -10 & 20 & 30 & 30 & 20 & -10 & -30 \\
--30 & -10 & 30 & 40 & 40 & 30 & -10 & -30 \\
--30 & -10 & 30 & 40 & 40 & 30 & -10 & -30 \\
--30 & -10 & 20 & 30 & 30 & 20 & -10 & -30 \\
--30 & -30 & 0 & 0 & 0 & 0 & -30 & -30 \\
--50 & -30 & -30 & -30 & -30 & -30 & -30 & -50
-\end{pmatrix}
-\end{equation}
-
-\bigskip
-
-\noindent Zusätzlich zu den eben beschriebenen Figuren-Quadrat Tabellen beschreibt Tomasz Michniewski, wann die Endphase des Spiel beginnt.
-Diese beginnt nach ihm, wenn eine der beiden folgenden Aussagen zutrifft [\cite{Wiki2018}]:
-
-\begin{enumerate}
-    \item Beide Seiten besitzen keine Königin
-    \item Beide Seiten haben neben der Königin entweder keine weiteren Figuren oder aber maximal eine kleine Figur
-\end{enumerate}
-
-
-\subsubsection{Weitere Bewertungsfunktionen}
-
-Das in Kapitel \textit{\ref{ch:simple-eval-function} Einfache Bewertungsfunktion} beschriebene Verfahren für eine (einfache) Bewertungsfunktion ist nicht die einzige Möglichkeit zur Evaluierung des Spielzustandes.
-Da eine durchgeführte Recherche jedoch keine klaren Abgrenzungen zwischen Arten von Bewertungsfunktionen aufzeigte und die beschriebene einfache Bewertungsfunktion in den meisten Fällen vollkommen ausreichend ist, wird an dieser Stelle auf eine weitere Ausführung verzichtet.
-
+\begin{algorithm}[H]
+    \caption{Minimax}
+    \label{alg:minimax_minimax}
+    \begin{algorithmic}[1]
+        \Function{maximize}{Integer $d$, Position $p$}
+        \If{$d < 1$}
+        \State \Return evaluate($p$)
+        \Else
+        \State $score \gets -\infty$
+        \State $legalMoves \gets findLegalMoves(p)$
+        \ForAll {$m$ in $legalMoves$}
+        \State p.move(m)
+        \State $moveScore \gets minimize(d-1, p)$
+        \State p.undoMove(m)
+        \If{$moveScore > score$}
+        \State $score \gets moveScore$
+        \EndIf
+        \EndFor
+        \EndIf
+        \State \Return $score$
+        \EndFunction
+        \Function{minimize}{Integer $d$, Position $p$}
+        \If{$d < 1$}
+        \State \Return evaluate($p$)
+        \Else
+        \State $score \gets \infty$
+        \State $legalMoves \gets findLegalMoves(p)$
+        \ForAll {$m$ in $legalMoves$}
+        \State p.move(m)
+        \State $moveScore \gets maximize(d-1, p)$
+        \State p.undoMove(m)
+        \If{$moveScore < score$}
+        \State $score \gets moveScore$
+        \EndIf
+        \EndFor
+        \EndIf
+        \State \Return $score$
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}
+\newpage
