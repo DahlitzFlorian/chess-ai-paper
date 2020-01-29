@@ -10,11 +10,11 @@ Es werden deshalb drei Fälle definiert, bei dessen Eintreffen die Standardsucht
 
 \begin{enumerate}
     \item Der ziehende Spieler befindet sich im Schach.
-    \item Der ziehende Spieler kann mit einem Bauern die letzte Reihe erreichen und diesen befördern.
+    \item Der ziehende Spieler kann mit einem Bauern die letzte Reihe erreichen und diesen umwandeln.
     \item Der ziehende Spieler kann einen potenziell vorteilhaften Schlagzug tätigen.
 \end{enumerate}
 
-Die ersten beiden Kriterien sind selbsterklärend, mit der Ausnahme, dass beim befördern der Bauern nur der Fall Dame und der Fall Springer berücksichtigt werden.
+Die ersten beiden Kriterien sind selbsterklärend, mit der Ausnahme, dass beim umwandeln der Bauern nur der Fall Dame und der Fall Springer berücksichtigt werden.
 Grund hierfür ist, dass die Bewegungsmöglichkeiten des Turms und des Läufers beide in denen der Dame enthalten sind.
 Es gibt zwar Situationen, in denen durch Pattgefahr ein Unterbefördern (engl. \textit{underpromote}) in einen Turm beziehungsweise Läufer sinnvoll ist, allerdings ist das eine Seltenheit und es lohnt sich nicht dafür den Spielbaum aufzublähen [\cite{Stuckardt}].
 Das dritte Kriterium wird im Folgenden erläutert.
