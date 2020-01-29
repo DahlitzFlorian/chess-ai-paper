@@ -14,6 +14,14 @@ Alpha speichert während der Analyse der verschiedenen Baumpfade die Evaluation 
 Analog wird Beta für den minimierenden Spieler (Schwarz) verwendet.
 Somit kann beim Analysieren eines Teilbaums potenziell bereits nach der Evaluierung des ersten Blattknotens bemerkt werden, dass diese Zugfolge weniger vorteilhaft ist, als eine bereits vorher betrachtete und somit die restlichen Zugmöglichkeiten des Teilbaums ignoriert werden.
 Im folgenden Beispiel ist Weiß am Zug und es werden die beiden Zugvarianten Rxb2 und Ka3 des Spielbaums (Abbildung~\ref{fig:alpha-beta_game-tree}) der Tiefe 2 betrachtet.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{images/theory/AlphaBetaExample2.png}
+    \caption[Beispielhafter Spielbaum der Tiefe 2 inklusive Evaluation]{Beispielhafter Spielbaum der Tiefe 2 inklusive Evaluation}
+    \label{fig:alpha-beta_game-tree}
+\end{figure}
+
 Die Ausgangssituation sieht wie folgt aus:
 
 \newgame
@@ -49,13 +57,6 @@ Die Analyse des ersten Zugs b1Q führt zu einer Evaluation von -4, denn Schwarz 
 Aus dieser Erkenntnis können wir schließen, dass aus Ka8 höchstens eine Position mit der Evaluation von -4 resultiert, da Schwarz der minimierende Spieler ist.
 Alpha, die Evaluation die der maximierende Spieler Weiß auf jeden Fall erreich kann, beträgt jedoch bereits +5.
 Deshalb steht fest, dass Weiß Ka3 nicht spielen wird und die restlichen sechs möglichen Züge von Schwarz brauchen auch nicht mehr evaluiert zu werden (im Graph mit roten Pfeilen gekennzeichnet).
-
-\begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{images/theory/AlphaBetaExample2.png}
-    \caption[Beispielhafter Spielbaum der Tiefe 2 inklusive Evaluation]{Beispielhafter Spielbaum der Tiefe 2 inklusive Evaluation}
-    \label{fig:alpha-beta_game-tree}
-\end{figure}
 
 Ähnlich wie in diesem Beispiel, würde auch ein menschlicher Spieler in dem meisten Situationen wohl kaum Zeit dafür verwenden, einen Zug zu analysieren, der dem Gegner eine extra Dame ermöglicht [\cite{Paulsen2009}].
 
