@@ -48,3 +48,7 @@ paper/pdfs/
 
 # TODO
 TODO
+
+# virtual environments
+.venv/
+venv/
