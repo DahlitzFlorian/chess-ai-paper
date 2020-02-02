@@ -32,7 +32,7 @@ Die Werte der Blattknoten werden anschließend nach oben propagiert.
 Maximierende Knoten (Spieler X ist am Zug) übernehmen den jeweils höchsten Zahlenwert, minimierende Knoten (Spieler O ist am Zug) den niedrigsten Wert.
 Am Ende dieses Prozesses ist von der Ausgangslage des Spiels erkennbar, dass Spieler X dem rechten Pfad des Baumes folgen muss, um garantiert einen Sieg zu erzielen, es für ihn aber auch bei einer Fehlentscheidung im nächsten Zug noch möglich ist, das Spiel zu gewinnen.
 Beim Schach ist es jedoch in der Regel nicht möglich alle Positionen bis zum Spielende zu analysieren.
-Im Gegenteil zu Tic-Tac-Toe, bei dem der Spielbaum maximal die Tiefe neun erreicht, kann beim Schach theoretisch eine Tiefe von 5899 erreicht werden.
+Im Gegenteil zu Tic-Tac-Toe, bei dem der Spielbaum maximal die Tiefe neun erreicht, kann beim Schach theoretisch eine Tiefe von 5899 erreicht werden (Quelle: Wikipedia 50-Züge Regel https://de.wikipedia.org/wiki/50-Züge-Regel abgerufen 01.02.2020).
 Da es im Verlauf eines Schachspiels durchschnittlich $x$ mögliche Züge für den Spieler am Zug gibt, gibt es ab einer bestimmten Tiefe $t$, $x^t$ zu analysierenden Positionen.
 Weil sogar schnelle Computer bei diesem exponentiell wachsenden Baum zu hohe Rechenzeiten benötigen, muss eine maximale Tiefe, bis zu der der Spielbaum analysiert wird, festgelegt werden.
 Diese ist je nach Anspruch bei präzisen Evaluationen tiefer, bei schnellen Evaluationen weniger tief.
@@ -48,7 +48,7 @@ Um den Minimax Algorithmus auf Programmierebene umzusetzen, werden folgende Meth
 Bei der Umsetzung der Kernaufgabe des Minimax-Algorithmus wird der Ansatz von [\cite{Knuth1975}] übernommen.
 Außerdem wird die Standard-Implementierung verwendet, bei der der gesamte Algorithmus in zwei Prozeduren, Minimize und  Maximize, aufgeteilt wird.
 Diese führen dabei jene Tätigkeiten aus, welche die Entscheidungen des minimierenden bzw. maximierenden Spielers repräsentieren.
-Bei der alternativen Negamax-Implementierung gibt es nur eine Minimax-Prozedur welche die Funktionen beider Spieler übernimmt.
+Bei der alternativen Negamax-Implementierung gibt es nur eine Minimax-Prozedur welche die Funktionen beider Spieler übernimmt (Quelle: Wikipedia Minimax-Algorithmus https://de.wikipedia.org/wiki/Minimax-Algorithmus abgerufen 01.02.2020).
 Um die Standard-Im\-ple\-men\-tie\-rung umzusetzten, werden Funktionen $F$ (Formel~\ref{eq:minimax_white-players-function}) für den Spieler Weiß und $G$ (Formel~\ref{eq:minimax_black-players-function}) für Spieler Schwarz definiert. Die beiden Funktionen definieren das Verhalten der Spieler beim Treffen auf eine Schachposition $p$ in der Tiefe $t$.
 
 \begin{equation} \label{eq:minimax_white-players-function}
@@ -72,7 +72,7 @@ Es kann, anders als bei der Negamax-Implementierung, dieselbe Bewertungsfunktion
 Der Pseudocode für einen Minimax ist in Algorithmus~\ref{alg:minimax_minimax} dargestellt.
 
 \begin{algorithm}[H]
-    \caption{Minimax}
+    \caption{Minimax mit Tiefenbegrenzung}
     \label{alg:minimax_minimax}
     \begin{algorithmic}[1]
         \Function{maximize}{Integer $d$, Position $p$}
