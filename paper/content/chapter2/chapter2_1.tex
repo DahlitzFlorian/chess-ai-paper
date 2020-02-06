@@ -49,9 +49,9 @@ Bei der Umsetzung der Kernaufgabe des Minimax-Algorithmus wird der Ansatz von [\
 Außerdem wird die Standard-Implementierung verwendet, bei der der gesamte Algorithmus in zwei Prozeduren, Minimize und  Maximize, aufgeteilt wird.
 Diese führen dabei jene Tätigkeiten aus, welche die Entscheidungen des minimierenden bzw. maximierenden Spielers repräsentieren.
 Bei der alternativen Negamax-Implementierung gibt es nur eine Minimax-Prozedur welche die Funktionen beider Spieler übernimmt (Quelle: Wikipedia Minimax-Algorithmus https://de.wikipedia.org/wiki/Minimax-Algorithmus abgerufen 01.02.2020).
-Um die Standard-Im\-ple\-men\-tie\-rung umzusetzten, werden Funktionen $F$ (Formel~\ref{eq:minimax_white-players-function}) für den Spieler Weiß und $G$ (Formel~\ref{eq:minimax_black-players-function}) für Spieler Schwarz definiert. Die beiden Funktionen definieren das Verhalten der Spieler beim Treffen auf eine Schachposition $p$ in der Tiefe $t$.
+Um die Standard-Im\-ple\-men\-tie\-rung umzusetzten, werden Funktionen $F$ (Formel~\ref{eq:minimax_white-players-function-with-depth}) für den Spieler Weiß und $G$ (Formel~\ref{eq:minimax_black-players-function-with-depth}) für Spieler Schwarz definiert. Die beiden Funktionen definieren das Verhalten der Spieler beim Treffen auf eine Schachposition $p$ in der Tiefe $t$.
 
-\begin{equation} \label{eq:minimax_white-players-function}
+\begin{equation} \label{eq:minimax_white-players-function-with-depth}
     F(p,t) =
     \begin{cases}
         e(p) \quad \text{if }t=0,\\
@@ -59,7 +59,7 @@ Um die Standard-Im\-ple\-men\-tie\-rung umzusetzten, werden Funktionen $F$ (Form
     \end{cases}
 \end{equation}
 
-\begin{equation} \label{eq:minimax_black-players-function}
+\begin{equation} \label{eq:minimax_black-players-function-with-depth}
     G(p,t) =
     \begin{cases}
         e(p) \quad \text{if }t=0,\\
@@ -68,6 +68,7 @@ Um die Standard-Im\-ple\-men\-tie\-rung umzusetzten, werden Funktionen $F$ (Form
 \end{equation}
 
 Dabei sind $p1$, ... , $pl$ die möglichen Positionen, welche nach einem Zug aus der Position p resultieren können und $e(p)$ die Bewertungsfunktion ist.
+Die verwendeten Hilfsfunktionen $p.move(m)$ und $p.undoMove(m)$ führen auf der Schachstellung $p$ den Zug $m$ aus, beziehungsweise machen ihn rückgängig.
 Es kann, anders als bei der Negamax-Implementierung, dieselbe Bewertungsfunktion für beide Funktionen benutzt werden, weil diese weiß-favorisierende Positionen mit positiven Werten- und schwarz-favorisierende Positionen mit negativen Werten bewertet.
 Der Pseudocode für einen Minimax ist in Algorithmus~\ref{alg:minimax_minimax} dargestellt.
 
