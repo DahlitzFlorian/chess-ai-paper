@@ -72,7 +72,7 @@ Diese werden zu Beginn mit den jeweils schlechtmöglichsten Werten für Weiß un
         \If{$d < 1$}
         \State \Return evaluate($p$)
         \Else
-        \State $score \gets -\infty$
+        \State $score \gets alpha$
         \State $legalMoves \gets findLegalMoves(p)$
         \ForAll {$m$ in $legalMoves$}
         \State p.move(m)
@@ -80,6 +80,9 @@ Diese werden zu Beginn mit den jeweils schlechtmöglichsten Werten für Weiß un
         \State p.undoMove(m)
         \If{$moveScore > score$}
         \State $score \gets moveScore$
+        \If{$score > alpha$}
+        \State $alpha \gets score$
+        \EndIf
         \EndIf
         \If{$score >= beta$}
         \State break
@@ -107,6 +110,9 @@ Diese werden zu Beginn mit den jeweils schlechtmöglichsten Werten für Weiß un
         \State p.undoMove(m)
         \If{$moveScore < score$}
         \State $score \gets moveScore$
+        \If{$score < beta$}
+        \State $beta \gets score$
+        \EndIf
         \EndIf
         \If{$score <= alpha$}
         \State break
