@@ -4,11 +4,11 @@
 Bedenkzeit ist im Wettbewerbsschach eine begrenzte Ressource.
 Deshalb muss sowohl die Güte eines Schachspielers, als auch die eines Schachcomputers, nicht nur nach der Qualität seiner Züge bewertet werden, sondern auch nach der benötigten Bedenkzeit.
 Durch das exponentielle Wachstum des Spielbaums gerät man beim Minimax Algorithmus, welcher den gesamten Spielbaum analysiert, schnell an rechnerische Grenzen für Computer.
-Eine solche Grenze kann bereits bei einer Tiefe von 10 auftreten, da bei dieser Tiefe schon mehr als 69 Billionen Züge analysiert werden müssen (Quelle: Wikipedia Shannon Number URL: https://en.wikipedia.org/wiki/Shannon_number Abgerufen 01.02.2020).
+Eine solche Grenze kann bereits bei einer Tiefe von 10 auftreten, da bei dieser Tiefe schon mehr als 69 Billionen Züge analysiert werden müssen [\cite{Wikipedia2020a}].
 Alpha-Beta Suche wird verwendet, um diesen Prozess zu beschleunigen ohne die Qualität der Analyse zu beeinträchtigen [\cite{Knuth1975}].
 
 Der Ansatz der Alpha-Beta-Suche beruht auf der Tatsache, dass eine vollständige Analyse jedes einzelnen Teilpfads des Spielbaums in den meisten Fällen nicht nötig ist.
-Aus diesem Grund ist es beim Schach möglich, mittels einer Zugvorsortierung bereits bei einer Tiefe von vier bis zu 99\% des Spielbaums vernachlässigen zu können (Quelle: Wikipedia Alpha-Beta-Suche URL: https://de.wikipedia.org/wiki/Alpha-Beta-Suche Abgerufen 01.02.2020).
+Aus diesem Grund ist es beim Schach möglich, mittels einer Zugvorsortierung bereits bei einer Tiefe von vier bis zu 99\% des Spielbaums vernachlässigen zu können [\cite{Wikipedia2019}].
 Der Name Alpha-Beta-Suche kommt von den in der Alpha-Beta-Suche verwendeten zwei Variablen Alpha und Beta.
 Alpha speichert während der Analyse der verschiedenen Baumpfade die Evaluation der momentan bestmöglich erreichbaren Position für den maximierenden Spieler (Weiß).
 Analog wird Beta für den minimierenden Spieler (Schwarz) verwendet.
