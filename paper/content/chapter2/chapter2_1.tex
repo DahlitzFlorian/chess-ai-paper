@@ -49,27 +49,62 @@ Bei der Umsetzung der Kernaufgabe des Minimax-Algorithmus wird der Ansatz von [\
 Außerdem wird die Standard-Implementierung verwendet, bei der der gesamte Algorithmus in zwei Prozeduren, Minimize und  Maximize, aufgeteilt wird.
 Diese führen dabei jene Tätigkeiten aus, welche die Entscheidungen des minimierenden bzw. maximierenden Spielers repräsentieren.
 Bei der alternativen Negamax-Implementierung gibt es nur eine Minimax-Prozedur welche die Funktionen beider Spieler übernimmt [\cite{Wikipedia2020}].
-Um die Standard-Im\-ple\-men\-tie\-rung umzusetzten, werden Funktionen $F$ (Formel~\ref{eq:minimax_white-players-function-with-depth}) für den Spieler Weiß und $G$ (Formel~\ref{eq:minimax_black-players-function-with-depth}) für Spieler Schwarz definiert. Die beiden Funktionen definieren das Verhalten der Spieler beim Treffen auf eine Schachposition $p$ in der Tiefe $t$.
+Ist ein Spielbaum gegeben, so lässt sich die optimale Strategie basierend auf den Minimax-Werten (engl. \textit{minimax values}) der einzelnen Knoten ableiten.
+Diese optimale Strategie wird als $\text{MINIMAX}(n)$ geschrieben und ist in Formel~\ref{eq:minimax_general-function} dargestellt [\cite{Russell2010}].
+
+\begin{equation} \label{eq:minimax_general-function}
+    \text{MINIMAX}(s) =
+    \begin{cases}
+        \text{UTILITY}(s) \hfill \text{*} \\
+        max_{a \in Actions(s)} \text{MINIMAX}(\text{RESULT}(s, a)) \hfill \text{**} \\
+        min_{a \in Actions(s)} \text{MINIMAX}(\text{RESULT}(s, a)) \hfill \text{***} \\
+    \end{cases}
+\end{equation}
+
+\begin{align*}
+    \begin{split}
+        & \text{*\ \ \ \ if TERMINAL-TEST}(s) \\
+        & \text{**\ \ \ if PLAYER(s)} = \text{MAX} \\
+        & \text{***\ \ if PLAYER(s)} = \text{MIN}
+    \end{split}
+\end{align*}
+
+Dabei gelten folgende Aussagen [\cite{Russell2010}]:
+
+\begin{itemize}
+    \item $s$ ist der aktuelle Zustand bzw. Knoten im Spielbaum.
+    \item $a$ ist eine Aktion bzw. ein Halbzug.
+    \item Die Funktion $\text{UTILITY}$ gibt den Nutzwert für einen Blattknoten zurück.
+    \item Die Funktion $\text{PLAYER}$ gibt den Spieler zurück, der am Zug ist ($\text{MAX}$ für Weiß und $\text{MIN}$ für Schwarz).
+    \item Die Funktion $\text{Actions}$ liefert die Menge der für den übergebenen Zustand gültigen Züge.
+    \item $\text{TERMINAL-TEST}$ gibt den Wert $true$ zurück, wenn das Spiel zu Ende (erreichen eines Blattknotens), ansonsten $false$.
+    \item $\text{RESULT}$ liefert den Zustand zurück, der folgt, wenn auf den Zustand $s$ die Aktion $a$ angewandt wird.
+\end{itemize}
+
+Für den Minimax-Wert, den die Funktion $\text{MINIMAX}$ liefert, wird angenommen, dass beide Spieler bis zum Ende des Spiels optimal spielen [\cite{Russell2010}].
+Da der Minimax-Algorithmus in dieser Form sehr rechenintensiv ist und viel Speicher benötigt, wird er durch eine maximale Tiefe begrenzt (\textit{begrenzte Tiefensuche}).
+Zur Umsetzung dieser begrenzten Tiefensuche werden Funktionen $F$ (Formel~\ref{eq:minimax_white-players-function-with-depth}) für den Spieler Weiß und $G$ (Formel~\ref{eq:minimax_black-players-function-with-depth}) für Spieler Schwarz definiert.
+Die beiden Funktionen definieren das Verhalten der Spieler beim Treffen auf eine Schachposition $p$ in der Tiefe $t$.
 
 \begin{equation} \label{eq:minimax_white-players-function-with-depth}
-    F(p,t) =
+    F(p, t) =
     \begin{cases}
-        e(p) \quad \text{if }t=0,\\
-        max(G(p1, t-1), G(p2, t-1), ... , G(pl, t-1)) \quad \text{if } t > 0
+        e(p) \quad \text{if } t = 0,\\
+        max(G(p_1, t - 1), G(p_2, t - 1), ... , G(p_l, t - 1)) \quad \text{if } t > 0
     \end{cases}
 \end{equation}
 
 \begin{equation} \label{eq:minimax_black-players-function-with-depth}
-    G(p,t) =
+    G(p, t) =
     \begin{cases}
-        e(p) \quad \text{if }t=0,\\
-        min(F(p1, t-1), F(p2, t-1), ... , F(pl, t-1)) \quad \text{if } t > 0
+        e(p) \quad \text{if } t = 0,\\
+        min(F(p_1, t - 1), F(p_2, t - 1), ... , F(p_l, t - 1)) \quad \text{if } t > 0
     \end{cases}
 \end{equation}
 
-Dabei sind $p1$, ... , $pl$ die möglichen Positionen, welche nach einem Zug aus der Position p resultieren können und $e(p)$ die Bewertungsfunktion ist.
+Dabei sind $p_1$, ... , $p_l$ die möglichen Positionen, welche nach einem Zug aus der Position p resultieren können und $e(p)$ die Bewertungsfunktion ist.
 Die verwendeten Hilfsfunktionen $p.move(m)$ und $p.undoMove(m)$ führen auf der Schachstellung $p$ den Zug $m$ aus, beziehungsweise machen ihn rückgängig.
-Es kann, anders als bei der Negamax-Implementierung, dieselbe Bewertungsfunktion für beide Funktionen benutzt werden, weil diese weiß-favorisierende Positionen mit positiven Werten- und schwarz-favorisierende Positionen mit negativen Werten bewertet.
+Es kann, anders als bei der Negamax-Implementierung, dieselbe Bewertungsfunktion für beide Funktionen benutzt werden, weil diese weiß-favorisierende Positionen mit positiven Werten und schwarz-favorisierende Positionen mit negativen Werten bewertet.
 Der Pseudocode für einen Minimax ist in Algorithmus~\ref{alg:minimax_minimax} dargestellt.
 
 \begin{algorithm}[H]
