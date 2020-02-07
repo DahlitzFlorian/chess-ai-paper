@@ -1,7 +1,8 @@
 % !TeX root = ../../paper.tex
 \subsubsection{Vorsortieren}
 
-Damit der Alpha-Beta Algorithmus, der in Kapitel~\ref{ch:alpha-beta-pruning} beschrieben wurde, bestmöglich wirken kann, müssen die aussichtsreichsten Züge zuerst durchsucht werden [\cite{Wiki2019}].
+Die Effektivität des Alpha-Beta Algorithmus, der in Kapitel~\ref{ch:alpha-beta-pruning} beschrieben wurde, ist stark abhängig von der Reihenfolge der Züge, in der diese ausgewertet werden.
+So ist es beim Alpha-Beta Algorithmus von Vorteil, wenn jene Züge, die für den jeweiligen Spieler vorteilhafter sind, zuerst ausgewertet werden [\cite{Russell2010}].
 Es existieren verschiedenste Herangehensweisen, dies umzusetzen.
 Da die möglichen Spielzüge in einem Suchgraphen abgebildet werden können und ein Schachcomputer für den allgemeinen Bedarf möglichst wenig Speicher benötigen sollte, bietet sich das \textit{Depth-First} Suchverfahren (zu dt. etwa \textit{Tiefensuche}) an.
 Dabei werden zuerst tieferliegende Knoten ausgewertet, bevor benachbarte Knoten ausgewertet werden.
