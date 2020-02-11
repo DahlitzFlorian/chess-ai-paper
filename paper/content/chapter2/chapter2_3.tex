@@ -4,16 +4,13 @@
 Bedenkzeit ist im Wettbewerbsschach eine begrenzte Ressource.
 Deshalb muss sowohl die Güte eines Schachspielers, als auch die eines Schachcomputers, nicht nur nach der Qualität seiner Züge bewertet werden, sondern auch nach der benötigten Bedenkzeit.
 Durch das exponentielle Wachstum des Spielbaums gerät man beim Minimax Algorithmus, welcher den gesamten Spielbaum analysiert, schnell an rechnerische Grenzen für Computer.
-Eine solche Grenze kann bereits bei einer Tiefe von 10 auftreten, da bei dieser Tiefe schon mehr als 69 Billionen Züge analysiert werden müssen.
+Eine solche Grenze kann bereits bei einer Tiefe von 10 auftreten, da bei dieser Tiefe schon mehr als 69 Billionen Züge analysiert werden müssen [\cite{Wikipedia2020a}].
 Alpha-Beta Suche wird verwendet, um diesen Prozess zu beschleunigen ohne die Qualität der Analyse zu beeinträchtigen [\cite{Knuth1975}].
 
 Der Ansatz der Alpha-Beta-Suche beruht auf der Tatsache, dass eine vollständige Analyse jedes einzelnen Teilpfads des Spielbaums in den meisten Fällen nicht nötig ist.
-Aus diesem Grund ist es beim Schach möglich, mittels einer Zugvorsortierung bis zu 99\% des Spielbaums vernachlässigen zu können.
+Aus diesem Grund ist es beim Schach möglich, mittels einer Zugvorsortierung bereits bei einer Tiefe von vier bis zu 99\% des Spielbaums vernachlässigen zu können [\cite{Wikipedia2019}].
 Der Name Alpha-Beta-Suche kommt von den in der Alpha-Beta-Suche verwendeten zwei Variablen Alpha und Beta.
-Alpha speichert während der Analyse der verschiedenen Baumpfade die Evaluation der momentan bestmöglich erreichbaren Position für den maximierenden Spieler (Weiß).
-Analog wird Beta für den minimierenden Spieler (Schwarz) verwendet.
-Somit kann beim Analysieren eines Teilbaums potenziell bereits nach der Evaluierung des ersten Blattknotens bemerkt werden, dass diese Zugfolge weniger vorteilhaft ist, als eine bereits vorher betrachtete und somit die restlichen Zugmöglichkeiten des Teilbaums ignoriert werden.
-Im folgenden Beispiel ist Weiß am Zug und es werden die beiden Zugvarianten Rxb2 und Ka3 des Spielbaums (Abbildung~\ref{fig:alpha-beta_game-tree}) der Tiefe 2 betrachtet.
+Für die beiden Variable gilt:
 
 \begin{figure}
     \centering
@@ -21,6 +18,20 @@ Im folgenden Beispiel ist Weiß am Zug und es werden die beiden Zugvarianten Rxb
     \caption[Beispielhafter Spielbaum der Tiefe 2 inklusive Evaluation]{Beispielhafter Spielbaum der Tiefe 2 inklusive Evaluation}
     \label{fig:alpha-beta_game-tree}
 \end{figure}
+
+\begin{align*}
+    \begin{split}
+        & \alpha = \text{Position mit der \textbf{momentan} bestmöglich erreichbaren Position für} \\
+        & \quad\quad \text{den maximierenden Spieler (Weiß)} \\
+        & \beta = \text{Position mit der \textbf{momentan} bestmöglich erreichbaren Position für} \\
+        & \quad\quad \text{den minimierenden Spieler (Schwarz)}    
+    \end{split}
+\end{align*}
+
+\bigskip
+
+\noindent Somit kann beim Analysieren eines Teilbaums potenziell bereits nach der Evaluierung des ersten Blattknotens bemerkt werden, dass diese Zugfolge weniger vorteilhaft ist, als eine bereits vorher betrachtete und somit die restlichen Zugmöglichkeiten des Teilbaums ignoriert werden.
+Im folgenden Beispiel ist Weiß am Zug und es werden die beiden Zugvarianten Rxb2 und Ka3 des Spielbaums (Abbildung~\ref{fig:alpha-beta_game-tree}) der Tiefe 2 betrachtet.
 
 Die Ausgangssituation sieht wie folgt aus:
 
@@ -47,7 +58,7 @@ Jetzt kann man Alpha mit einem Wert von +5 belegen, denn falls Weiß möchte, ka
 Anschließend wird der zweite Zug Ka3 analysiert.
 Schwarz hat sieben Möglichkeiten auf Ka3 zu antworten (b1Q, b1R, b1N, b1B, Kg7, Kh7, Kg8).
 Da wir wieder die Tiefe zwei erreicht haben, werden die Züge statisch evaluiert.
-Die Analyse des ersten Zugs b1Q führt zu einer Evaluation von -4, denn Schwarz hat nun eine Dame für weiß' Turm (im Graph mit grünem Pfeil gekennzeichnet).
+Die Analyse des ersten Zugs b1Q führt zu einer Evaluation von -4, denn Schwarz hat nun eine Dame für weiß' Turm (im Graphen der Abbildung~\ref{fig:alpha-beta_game-tree} mit grünem Pfeil gekennzeichnet).
 
 \setchessboard{setpieces=\AlphaBetaKa, mover=w}
 \begin{center}
@@ -56,7 +67,7 @@ Die Analyse des ersten Zugs b1Q führt zu einer Evaluation von -4, denn Schwarz 
 
 Aus dieser Erkenntnis können wir schließen, dass aus Ka8 höchstens eine Position mit der Evaluation von -4 resultiert, da Schwarz der minimierende Spieler ist.
 Alpha, die Evaluation die der maximierende Spieler Weiß auf jeden Fall erreich kann, beträgt jedoch bereits +5.
-Deshalb steht fest, dass Weiß Ka3 nicht spielen wird und die restlichen sechs möglichen Züge von Schwarz brauchen auch nicht mehr evaluiert zu werden (im Graph mit roten Pfeilen gekennzeichnet).
+Deshalb steht fest, dass Weiß Ka3 nicht spielen wird und die restlichen sechs möglichen Züge von Schwarz brauchen auch nicht mehr evaluiert zu werden (im Graphen der Abbildung~\ref{fig:alpha-beta_game-tree} mit roten Pfeilen gekennzeichnet).
 
 Ähnlich wie in diesem Beispiel, würde auch ein menschlicher Spieler in dem meisten Situationen wohl kaum Zeit dafür verwenden, einen Zug zu analysieren, der dem Gegner eine extra Dame ermöglicht [\cite{Paulsen2009}].
 
@@ -72,7 +83,7 @@ Diese werden zu Beginn mit den jeweils schlechtmöglichsten Werten für Weiß un
         \If{$d < 1$}
         \State \Return evaluate($p$)
         \Else
-        \State $score \gets -\infty$
+        \State $score \gets alpha$
         \State $legalMoves \gets findLegalMoves(p)$
         \ForAll {$m$ in $legalMoves$}
         \State p.move(m)
@@ -80,6 +91,9 @@ Diese werden zu Beginn mit den jeweils schlechtmöglichsten Werten für Weiß un
         \State p.undoMove(m)
         \If{$moveScore > score$}
         \State $score \gets moveScore$
+        \If{$score > alpha$}
+        \State $alpha \gets score$
+        \EndIf
         \EndIf
         \If{$score >= beta$}
         \State break
@@ -107,6 +121,9 @@ Diese werden zu Beginn mit den jeweils schlechtmöglichsten Werten für Weiß un
         \State p.undoMove(m)
         \If{$moveScore < score$}
         \State $score \gets moveScore$
+        \If{$score < beta$}
+        \State $beta \gets score$
+        \EndIf
         \EndIf
         \If{$score <= alpha$}
         \State break
