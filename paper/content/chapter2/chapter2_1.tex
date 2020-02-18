@@ -39,10 +39,10 @@ Diese ist je nach Anspruch bei präzisen Evaluationen tiefer, bei schnellen Eval
 Um den Minimax Algorithmus auf Programmierebene umzusetzen, werden folgende Methoden benötigt [\cite{Shannon1950}]:
 
 \begin{itemize}
-    \item Sammelt für eine Position die erlaubten Züge. Hierfür muss sowohl auf verschiedenen Zugarten der Figuren und Schach eingegangen werden, als auch Sonderzüge wie En-Passant und die Rochade berücksichtigt werden.
-    \item Die Kernaufgabe des Minimax Algorithmus umsetzt, also das abwechselnde Maximieren und Minimieren der möglichen Folgezüge einer Position.
-    \item Die statische Eval-Function aus Kapitel 2.1 umsetzt.
-    \item Kann für eine Position Schachzüge ausführen und diese auch rückgängig machen
+    \item Eine Methode, welche für eine Stellung die erlaubten Züge bestimmen kann. Hierfür müssen die verschiedenen Zugmöglichkeiten der Figuren, Schach und Sonderzüge wie En-Passant und die Rochade berücksichtigt werden.
+    \item Eine Methode, die die Kernaufgabe des Minimax Algorithmus umsetzt, also das abwechselnde Maximieren und Minimieren der möglichen Folgezüge einer Stellung.
+    \item Eine Methode, die die Bewertungsheuristik umsetzt.
+    \item Eine Methode, welche für eine Position Schachzüge ausführen und diese auch rückgängig machen kann.
 \end{itemize}
 
 Bei der Umsetzung der Kernaufgabe des Minimax-Algorithmus wird der Ansatz von [\cite{Knuth1975}] übernommen.
@@ -83,7 +83,7 @@ Dabei gelten folgende Aussagen [\cite{Russell2010}]:
 
 Für den Minimax-Wert, den die Funktion $\text{MINIMAX}$ liefert, wird angenommen, dass beide Spieler bis zum Ende des Spiels optimal spielen [\cite{Russell2010}].
 Da der Minimax-Algorithmus in dieser Form sehr rechenintensiv ist und viel Speicher benötigt, wird er durch eine maximale Tiefe begrenzt (\textit{begrenzte Tiefensuche}).
-Zur Umsetzung dieser begrenzten Tiefensuche werden Funktionen $F$ (Formel~\ref{eq:minimax_white-players-function-with-depth}) für den Spieler Weiß und $G$ (Formel~\ref{eq:minimax_black-players-function-with-depth}) für Spieler Schwarz definiert.
+Zur Umsetzung dieser begrenzten Tiefensuche werden Funktionen $F$ (Formel~\ref{eq:minimax_white-players-function-with-depth}) für den Spieler Weiß und $G$ (Formel~\ref{eq:minimax_black-players-function-with-depth}) für Spieler Schwarz definiert, dafür wird er Ansatz von [\cite{Knuth1975}] verwendet.
 Die beiden Funktionen definieren das Verhalten der Spieler beim Treffen auf eine Schachposition $p$ in der Tiefe $t$.
 
 \begin{equation} \label{eq:minimax_white-players-function-with-depth}
