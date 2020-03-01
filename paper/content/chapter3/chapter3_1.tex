@@ -1,3 +1,15 @@
 % !TeX root = ../../paper.tex
 \subsection{Tools}
 
+Zur Umsetzung der algorithmischen Anteile werden ausschließlich Funktionalitäten der Python Standardbibliothek verwendet.
+Für die Repräsentation eines Schachspiels sowie die Visualisierung wird das Paket \textit{Python-Chess} verwendet.
+Das Paket ist im \ac{PyPI} verfügbar.
+Aus diesem Grund kann es, wie in Listing~\ref{lst:tools_python-chess_pip-installation} dargestellt, über den Python Package Installer \textit{pip} installiert werden.
+
+\bigskip
+
+\begin{lstlisting}[caption={Installation des Python-Chess Pakets via pip}, captionpos=b, label={lst:tools_python-chess_pip-installation}, language=sh]
+$ python -m pip install python-chess
+\end{lstlisting}
+
+\noindent Des Weiteren wird zur Dokumentation der Umsetzung und für das Spielen gegen den Schachcomputer ein Jupyter Notebook verwendet.
