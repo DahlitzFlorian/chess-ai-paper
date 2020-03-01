@@ -1,0 +1,10 @@
+% !TeX root = ../../paper.tex
+\subsubsection{Transpositionstabellen} \label{ch:transposition-tables}
+
+Im Schach treten viele \textit{Transpositionen} auf.
+Transpositionen sind verschiedene Permutationen einer Zugsequenz, die in die selbe Stellung münden [\cite{Russell2010}].
+Folgendes Beispiel soll dies näher illustrieren: Weiß hat einen Zug, $a1$, der von Schwarz mit $b1$ beantwortet werden kann, und einen nicht verwandten Zug $a2$ auf der anderen Seite des Bretts, der mit $b2$ beantwortet werden kann.
+Beide Sequenzen $[a1, b1, a2, b2]$ und $[a2, b2, a1, b1]$ münden in der gleichen Stellung.
+Es ist vorteilhaft, das Ergebnis der ersten Zugsequenz in einer Hash Tabelle abzulegen und beim zweiten Mal das Ergebnis aus der Hash Tabelle zu verwenden, anstatt es von Neuem zu berechnen.
+Das Verwenden von Transpositionstabellen kann einen signifikanten Einfluss haben.
+So kann die Verwendung dafür sorgen, dass in einigen Fällen der Schachcomputer bis zu der doppelten Tiefe suchen kann [\cite{Russell2010}].
