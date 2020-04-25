@@ -14,10 +14,8 @@ Im Falle der Transpositionstabellen wird dabei die Stellung als Schlüssel verwe
 Die Stellung muss hierbei mittels einer Hashfunktion in einen Schlüssel umgewandelt werden.
 Hierfür exisitieren verschiedenste Ansätze und Hashfunktionen.
 Zu den bekanntesten zählen Zobrist Hashing und BCH Hashing [\cite{Wiki2020}].
-Im Zuge dieser Arbeit wird als eindeutiger Schlüssel ein Tupel bestehend aus der Stellung in \ac{FEN} und der Tiefe verwendet.
-Die \ac{FEN} ist eine Standarddarstellung, die ausschließlich den ASCII-Zeichensatz verwendet [\cite{Edwards}].
-Sie wird verwendet, weil diese bereits eindeutig ist und von der verwendeten Bilbiothek unterstützt wird.
-Zudem enthält sie auch eine Information darüber, welcher Spieler gerade am Zug ist.
+Im Zuge dieser Arbeit Zobrist Hashing verwendet.
+Als eindeutiger Schlüssel wird ein Tupel bestehend aus dem Hash und der Tiefe verwendet.
 
 Als Wert zum Schlüssel wird ein Tripel der Form $<score, alpha, beta>$ gespeichert.
 Es ist von entscheidender Bedeutung, dass nicht nur der Score abgespeichert wird, sondern auch die dazugehörigen Intervallsgrenzen Alpha und Beta, um überprüfen zu können, ob der Score an der verwendeten Stelle aussagekräftig genug ist [\cite{Wiki2020}].
