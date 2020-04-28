@@ -1,3 +1,17 @@
 % !TeX root = ../paper.tex
-\section{Auswertung} \label{ch:evaluation}
+\section{Auswertung und Diskussion} \label{ch:evaluation-discussion}
 
+In diesem Kapitel erfolgt eine Einschätzung der Stärke des entwickelten Schachcomputers.
+Zudem werden vernachlässigte Aspekte benannt und teilweise verwendete Vereinfachungen dargelegt.
+
+Nach Einschätzung der Autoren besitzt der implementierte Schachcomputer eine Elo-Wert von 1500.
+Diese Einschätzung stammt von Spielen der Autoren gegen den Schachcomputer.
+Da im vorgegebenen Zeitrahmen keine Spiele gegen mehrere Spieler oder Turniere gegen andere Schachcomputern mit bekannten Elo-Zahlen durchgeführt werden konnten, ist eine genauere oder objektivere Schätzung nicht möglich.
+
+Die Implementierung wurde ausschließlich in der Programmiersprache Python vorgenommen.
+Die Berechnung in größere Tiefen und der damit einhergehende Anstieg der Stärke des Schachcomputers hätten durch eine Auslagerung in Sprachen wie C ermöglicht werden können.
+Zudem würde sich bereits die Verwendung von mehreren Threads oder Prozessen positiv auf die Berechnungstiefe auswirken.
+Auch wirkt sich die Verwendung eines Jupyter Notebooks mit dem mitgelieferten Kernel negativ auf die Ausführung aus.
+Diese Punkte wurden aufgrund der Aufgabenstellung und der Lesbarkeit des Programmcodes vernachlässigt.
+Bei der Zugvorsortierung und der Beschneidung des dazugehörigen Dictionaries handelt es sich um eine naive Implementierung.
+Eine auf den Schachcomputer zugeschnittene Implementierung ist in künftigen Untersuchungen vorzuziehen.
