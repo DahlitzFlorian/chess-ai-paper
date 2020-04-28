@@ -1,0 +1,71 @@
+% !TeX root = ../../paper.tex
+\subsubsection{Transpositionstabellen} \label{ch:transposition-tables}
+
+Im Schach treten viele \textit{Transpositionen} auf.
+Transpositionen sind verschiedene Permutationen einer Zugsequenz, die in die selbe Stellung münden [\cite{Russell2010}].
+Folgendes Beispiel soll dies näher illustrieren: Weiß hat einen Zug, $a1$, der von Schwarz mit $b1$ beantwortet werden kann, und einen nicht verwandten Zug $a2$ auf der anderen Seite des Bretts, der mit $b2$ beantwortet werden kann.
+Beide Sequenzen $[a1, b1, a2, b2]$ und $[a2, b2, a1, b1]$ münden in der gleichen Stellung.
+Es ist vorteilhaft, das Ergebnis der ersten Zugsequenz in einer Hashtabelle abzulegen und beim zweiten Mal das Ergebnis aus der Hash Tabelle zu verwenden, anstatt es von Neuem zu berechnen.
+Das Verwenden von Transpositionstabellen kann einen signifikanten Einfluss haben.
+So kann die Verwendung dafür sorgen, dass in einigen Fällen der Schachcomputer bis zu der doppelten Tiefe suchen kann [\cite{Russell2010}].
+
+In der Hashtabelle wird ein eindeutiger Schlüssel zur Identifikation eines Eintrags verwendet.
+Im Falle der Transpositionstabellen wird dabei die Stellung als Schlüssel verwendet.
+Die Stellung muss hierbei mittels einer Hashfunktion in einen Schlüssel umgewandelt werden.
+Hierfür exisitieren verschiedenste Ansätze und Hashfunktionen.
+Zu den bekanntesten zählen Zobrist Hashing und BCH Hashing [\cite{Wiki2020}].
+Im Zuge dieser Arbeit Zobrist Hashing verwendet.
+Als eindeutiger Schlüssel wird ein Tupel bestehend aus dem Hash und der Tiefe verwendet.
+
+Als Wert zum Schlüssel wird ein Tripel der Form $<score, alpha, beta>$ gespeichert.
+Es ist von entscheidender Bedeutung, dass nicht nur der Score abgespeichert wird, sondern auch die dazugehörigen Intervallsgrenzen Alpha und Beta, um überprüfen zu können, ob der Score an der verwendeten Stelle aussagekräftig genug ist [\cite{Wiki2020}].
+Liegen das für eine Stellung verwendete Alpha-Beta-Intervall innerhalb eines abgespeicherten Intervalls für diese Stellung oder ist mit dem gespeicherten Intervall identisch, so darf der abgelegte Wert verwendet werden.
+Andernfalls wird das Intervall angepasst und der Score muss von Neuem berechnet werden.
+
+Da die Menge an Transpositionstabellen zu groß für einen Heimcomputer werden kann, muss eine maximale Anzahl von Transpositionstabellen im Speicher festgelegt werden.
+Zudem muss ein Verfahren bestimmt und implementiert werden, wann Transpositionstabellen aus dem Speicher entfernt werden.
+Hierfür eignet sich der \ac{LRU} Ansatz.
+Das bedeutet, dass, falls die maximale Anzahl an Einträgen erreicht ist, der Eintrag, der am längsten nicht verwendet wird, aus dem Speicher entfernt wird und Platz für den neuen Eintrag schafft.
+Eine Implementierung dieses Verfahrens in Python ist in Listing~\ref{lst:transpo-tables_lru-cache} dargestellt.
+
+\bigskip
+
+\begin{lstlisting}[caption={Implementierung eines LRU Caches}, captionpos=b, label={lst:transpo-tables_lru-cache}, language=Python]
+class LRUCache:
+    def __init__(self, size):
+        self.od = OrderedDict()
+        self.size = size
+
+    def get(self, key, default=None):
+        try:
+            self.od.move_to_end(key)
+        except KeyError:
+            return default
+        return self.od[key]
+    
+    def __contains__(self, item):
+        return item in self.od
+    
+    def __len__(self):
+        return len(self.od)
+
+    def __getitem__(self, key):
+        self.od.move_to_end(key)
+        return self.od[key]
+
+    def __setitem__(self, key, value):
+        try:
+            del self.od[key]
+        except KeyError:
+            if len(self.od) == self.size:
+                self.od.popitem(last=False)
+        self.od[key] = value
+\end{lstlisting}
+
+\noindent Es handelt sich um einen klassenbasierten Ansatz, wobei intern zur Speicherung ein \lstinline[language=Python]{OrderedDict} verwendet.
+Der Vorteile eine \lstinline[language=Python]{OrderedDict} gegenüber eines normalen Dictionary ist die Tatsache, dass ein \lstinline[language=Python]{OrderedDict} sich die Reihenfolge, in der neue Schlüssel-Wert-Paare hinzugefügt werden, merkt.
+An dieser Stelle wird ein Wrapper für das \lstinline[language=Python]{OrderedDict} verwendet, um den Alterungsprozess von Einträgen kontrollieren zu können.
+Wird auf einen bereits vorhandenen Eintrag zugegriffen, so wird dieser erst an das Ende des \lstinline[language=Python]{OrderedDict} verschoben und dann zurückgegeben.
+Wird hingegen ein neuer Eintrag hinzugefügt, obwohl die maximale Anzahl an Einträgen bereits erreicht ist, so wird das erste Element im \lstinline[language=Python]{OrderedDict}, das somit am längsten nicht verwendet wurde, gelöscht und der neue Eintrag am Ende eingefügt.
+
+Die in Listing~\ref{lst:transpo-tables_lru-cache} dargestellte Implementierung eines \ac{LRU} Caches wird in der späteren Umsetzung der Transpositionstabellen verwendet.
