@@ -4,7 +4,7 @@
 In diesem Kapitel erfolgt eine Einschätzung der Stärke des entwickelten Schachcomputers.
 Zudem werden vernachlässigte Aspekte benannt und teilweise verwendete Vereinfachungen dargelegt.
 
-Nach Einschätzung der Autoren besitzt der implementierte Schachcomputer eine Elo-Wert von 1500.
+Nach Einschätzung der Autoren besitzt der implementierte Schachcomputer eine Elo-Wert von 1400 bis 1500.
 Diese Einschätzung stammt von Spielen der Autoren gegen den Schachcomputer.
 Da im vorgegebenen Zeitrahmen keine Spiele gegen mehrere Spieler oder Turniere gegen andere Schachcomputern mit bekannten Elo-Zahlen durchgeführt werden konnten, ist eine genauere oder objektivere Schätzung nicht möglich.
 
@@ -13,5 +13,9 @@ Die Berechnung in größere Tiefen und der damit einhergehende Anstieg der Stär
 Zudem würde sich bereits die Verwendung von mehreren Threads oder Prozessen positiv auf die Berechnungstiefe auswirken.
 Auch wirkt sich die Verwendung eines Jupyter Notebooks mit dem mitgelieferten Kernel negativ auf die Ausführung aus.
 Diese Punkte wurden aufgrund der Aufgabenstellung und der Lesbarkeit des Programmcodes vernachlässigt.
-Bei der Zugvorsortierung und der Beschneidung des dazugehörigen Dictionaries handelt es sich um eine naive Implementierung.
-Eine auf den Schachcomputer zugeschnittene Implementierung ist in künftigen Untersuchungen vorzuziehen.
+Bei der Zugvorsortierung handelt es sich um eine naive Implementierung.
+Eine auf den Schachcomputer zugeschnittene Implementierung ist in künftigen Untersuchungen vorzuziehen, die auch das unendliche Anwachsen des dazugehörigen Dictionaries verhindert.
+
+Nach langem Testen wurde sich dafür entschieden die maximale Tiefe der Ruhesuche auf 20 zu setzen und Züge, welche den Gegner in Schach setzen nicht als vorteilhaften Zug zu bewerten.
+Grund für beide Maßnahmen sind die hohen Rechenkosten die entstehen, wenn der Baum bis Tiefe 30 abgesucht wird und der Baum durch viele Möglichkeiten des Schachsetzens aufgebläht wird.
+Da die gesamte Umsetzung im Jupyter Notebook schon nicht sehr performant ist, mussten deshalb diese Entscheidungen getroffen werden, um nicht zu viel an Performanz einzubüßen.
